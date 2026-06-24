@@ -4,7 +4,7 @@ import React from "react";
 import { Printer, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export function InvoiceActions() {
+export function InvoiceActions({ backUrl = "/account/orders" }: { backUrl?: string }) {
   const handlePrint = () => {
     window.print();
   };
@@ -12,11 +12,11 @@ export function InvoiceActions() {
   return (
     <div className="no-print fixed bottom-6 right-6 flex items-center gap-3 bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-elevated border border-border/60 z-50">
       <Link
-        href="/account/orders"
+        href={backUrl}
         className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-white hover:bg-neutral-50 text-xs font-bold text-charcoal transition-all shadow-xs"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Orders
+        Back
       </Link>
       <button
         onClick={handlePrint}
