@@ -13,7 +13,7 @@ export default function AccountWishlistPage() {
   const { wishlist, toggleWish, add } = useCart();
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string | number>>({});
 
   useEffect(() => {
     if (wishlist.length === 0) {
@@ -35,7 +35,7 @@ export default function AccountWishlistPage() {
         setItems(validProducts);
 
         // Initialize default sizes for each product
-        const defaults: Record<string, number> = {};
+        const defaults: Record<string, string | number> = {};
         validProducts.forEach((p) => {
           if (p.sizes && p.sizes.length > 0) {
             defaults[p.id] = p.sizes[0];
@@ -46,7 +46,7 @@ export default function AccountWishlistPage() {
       .finally(() => setLoading(false));
   }, [wishlist]);
 
-  const handleSizeChange = (productId: string, size: number) => {
+  const handleSizeChange = (productId: string, size: string | number) => {
     setSelectedSizes((prev) => ({
       ...prev,
       [productId]: size,
@@ -54,7 +54,7 @@ export default function AccountWishlistPage() {
   };
 
   const handleMoveToBag = (product: Product) => {
-    const size = selectedSizes[product.id] || product.sizes?.[0] || 7;
+    const size = selectedSizes[product.id] || product.sizes?.[0] || "";
     const color = product.colors?.[0] || "Default";
 
     // Add to cart
@@ -63,9 +63,18 @@ export default function AccountWishlistPage() {
     // Remove from wishlist
     toggleWish(product.id);
 
+    const displaySize = () => {
+      const sStr = String(size || "").trim();
+      if (!sStr) return "";
+      const num = Number(sStr);
+      const isShoe = !isNaN(num) && num > 0 && num < 20;
+      return isShoe ? `UK/IND ${sStr}` : sStr;
+    };
+    const sizeDesc = displaySize() ? `Size: ${displaySize()} · ` : "";
+
     // Toast notification
     toast.success(`Moved ${product.name} to Cart!`, {
-      description: `Size: UK/IND ${size} · Color: ${color}`,
+      description: `${sizeDesc}Color: ${color}`,
     });
   };
 
@@ -139,7 +148,7 @@ export default function AccountWishlistPage() {
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {items.map((p) => {
               const stock = p.stock ?? 10;
-              const selectedSize = selectedSizes[p.id] || p.sizes?.[0] || 7;
+              const selectedSize = selectedSizes[p.id] || p.sizes?.[0] || "";
 
               // Stock badge style
               let stockLabel = "In Stock";
@@ -223,7 +232,20 @@ export default function AccountWishlistPage() {
                     {p.sizes && p.sizes.length > 0 && stock > 0 && (
                       <div className="mt-4 pt-3.5 border-t border-border/40 space-y-2">
                         <p className="text-[9px] uppercase font-bold tracking-wider text-muted-foreground">
-                          Select UK Size:
+                          {(() => {
+                            const categorySlug = String(p.category || "").toLowerCase();
+                            const tagsList = ((p as any).tags || p.details || []).map((t: string) => String(t).toLowerCase());
+                            const isFootwear = categorySlug.includes("footwear") || categorySlug.includes("shoes") || tagsList.includes("shoes") || tagsList.includes("footwear");
+                            const isFashion = categorySlug.includes("fashion") || categorySlug.includes("apparel") || categorySlug.includes("clothing") || tagsList.includes("clothing") || tagsList.includes("fashion");
+                            const isGrocery = categorySlug.includes("grocery") || categorySlug.includes("staples") || categorySlug.includes("beverage") || tagsList.includes("grocery") || tagsList.includes("rice") || tagsList.includes("tea");
+                            const isElectronics = categorySlug.includes("electronics") || categorySlug.includes("phone") || categorySlug.includes("mobiles") || categorySlug.includes("laptops") || tagsList.includes("electronics");
+                            
+                            if (isFootwear) return "Select UK Size:";
+                            if (isFashion) return "Select Size:";
+                            if (isGrocery) return "Select Pack Size:";
+                            if (isElectronics) return "Select Config:";
+                            return "Select Option:";
+                          })()}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {p.sizes.map((size) => (
@@ -231,7 +253,7 @@ export default function AccountWishlistPage() {
                               key={size}
                               onClick={() => handleSizeChange(p.id, size)}
                               className={`h-7 px-2.5 rounded-md text-[10px] font-bold border transition cursor-pointer ${
-                                selectedSize === size
+                                String(selectedSize) === String(size)
                                   ? "bg-primary border-primary text-primary-foreground font-extrabold shadow-sm"
                                   : "bg-background border-border text-muted-foreground hover:border-muted-foreground/45 hover:text-foreground"
                               }`}

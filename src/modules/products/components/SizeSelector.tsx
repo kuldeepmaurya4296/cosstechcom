@@ -5,10 +5,12 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SizeSelectorProps {
-  sizes: number[];
-  selectedSize: number | null;
-  onSelect: (size: number) => void;
-  availableSizes?: number[];
+  sizes: (string | number)[];
+  selectedSize: string | number | null;
+  onSelect: (size: string | number) => void;
+  availableSizes?: (string | number)[];
+  label?: string;
+  showSizeGuide?: boolean;
 }
 
 export function SizeSelector({
@@ -16,6 +18,8 @@ export function SizeSelector({
   selectedSize,
   onSelect,
   availableSizes = [],
+  label = "Size (UK/IND)",
+  showSizeGuide = true,
 }: SizeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"chart" | "measure">("chart");
@@ -34,13 +38,15 @@ export function SizeSelector({
   return (
     <div>
       <div className="flex justify-between mb-2">
-        <p className="text-sm font-semibold">Size (UK/IND)</p>
-        <button
-          onClick={() => setIsOpen(true)}
-          className="text-xs underline hover:text-primary transition-colors cursor-pointer border-0 bg-transparent p-0 outline-none"
-        >
-          Size guide
-        </button>
+        <p className="text-sm font-semibold">{label}</p>
+        {showSizeGuide && (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="text-xs underline hover:text-primary transition-colors cursor-pointer border-0 bg-transparent p-0 outline-none"
+          >
+            Size guide
+          </button>
+        )}
       </div>
       <div className="grid grid-cols-6 gap-2">
         {sizes.map((s) => {
@@ -154,14 +160,14 @@ export function SizeSelector({
                             <tr
                               key={row.uk}
                               className={`hover:bg-muted/30 transition-colors ${
-                                selectedSize === row.uk
+                                selectedSize !== null && String(selectedSize) === String(row.uk)
                                   ? "bg-primary/5 font-bold text-primary"
                                   : "text-muted-foreground"
                               }`}
                             >
                               <td className="px-4 py-3 font-bold text-charcoal flex items-center gap-1.5">
                                 {row.uk}
-                                {selectedSize === row.uk && (
+                                {selectedSize !== null && String(selectedSize) === String(row.uk) && (
                                   <span className="text-[9px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
                                     Selected
                                   </span>

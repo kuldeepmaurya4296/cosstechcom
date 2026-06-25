@@ -375,8 +375,14 @@ export default function AccountOrdersPage() {
                               {it.name}
                             </p>
                             <p className="text-xs text-muted-foreground mt-0.5">
-                              Size: UK/IND {it.size} · Color: {it.color} · Qty:{" "}
-                              {it.quantity || it.qty}
+                              {(() => {
+                                const sStr = String(it.size || "").trim();
+                                if (!sStr) return "";
+                                const num = Number(sStr);
+                                const isShoe = !isNaN(num) && num > 0 && num < 20;
+                                return `Size: ${isShoe ? "UK/IND " : ""}${sStr} · `;
+                              })()}
+                              Color: {it.color} · Qty: {it.quantity || it.qty}
                             </p>
                           </div>
                           <div className="text-right shrink-0">

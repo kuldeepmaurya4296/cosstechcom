@@ -93,11 +93,49 @@ export default function ProductClient({
 }: ProductClientProps) {
   const router = useRouter();
   const { add, wishlist, toggleWish } = useCart();
-  const [size, setSize] = useState<number | null>(null);
+  const [size, setSize] = useState<string | number | null>(null);
   const [color, setColor] = useState("");
   const [qty, setQty] = useState(1);
   const [addingToBag, setAddingToBag] = useState(false);
   const { addProduct } = useRecentlyViewed();
+
+  // Dynamic styling and label logic based on category/tags
+  const categorySlug = String(product.category || "").toLowerCase();
+  const tagsList = (product.tags || []).map((t: string) => t.toLowerCase());
+
+  const isFootwear = categorySlug.includes("footwear") || 
+                     categorySlug.includes("shoes") || 
+                     tagsList.includes("shoes") || 
+                     tagsList.includes("footwear");
+  
+  const isFashion = categorySlug.includes("fashion") || 
+                    categorySlug.includes("apparel") || 
+                    categorySlug.includes("clothing") ||
+                    tagsList.includes("clothing") ||
+                    tagsList.includes("fashion");
+
+  const isGrocery = categorySlug.includes("grocery") || 
+                    categorySlug.includes("staples") || 
+                    categorySlug.includes("beverage") ||
+                    tagsList.includes("grocery") ||
+                    tagsList.includes("rice") ||
+                    tagsList.includes("tea");
+
+  const isElectronics = categorySlug.includes("electronics") || 
+                        categorySlug.includes("phone") || 
+                        categorySlug.includes("mobiles") || 
+                        categorySlug.includes("laptops") ||
+                        tagsList.includes("electronics");
+
+  const sizeLabel = useMemo(() => {
+    if (isFootwear) return "Size (UK/IND)";
+    if (isFashion) return "Size";
+    if (isGrocery) return "Pack Size";
+    if (isElectronics) return "Configuration";
+    return "Option";
+  }, [isFootwear, isFashion, isGrocery, isElectronics]);
+
+  const showSizeGuide = isFootwear;
 
   // Map color names to their corresponding hex values from variants
   const colorsWithHex = useMemo(() => {
@@ -174,17 +212,17 @@ export default function ProductClient({
     size !== null && selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock <= 5;
 
   const handleAdd = async () => {
-    if (!size) {
-      toast.error("Please select a size before adding to bag");
+    if (product.sizes?.length > 0 && !size) {
+      toast.error(`Please select a ${sizeLabel.toLowerCase()} before adding to bag`);
       return;
     }
     if (isOutOfStock) {
-      toast.error("This color/size combination is out of stock");
+      toast.error("This option is out of stock");
       return;
     }
     setAddingToBag(true);
     await new Promise((r) => setTimeout(r, 400));
-    add(product, { size, color, quantity: qty });
+    add(product, { size: size || "", color, quantity: qty });
     setAddingToBag(false);
     router.push("/cart");
   };
@@ -333,12 +371,16 @@ export default function ProductClient({
           <ColorSelector colors={colorsWithHex} selectedColor={color} onSelect={setColor} />
 
           {/* Size Selector */}
-          <SizeSelector
-            sizes={product.sizes}
-            selectedSize={size}
-            onSelect={setSize}
-            availableSizes={availableSizesForColor}
-          />
+          {product.sizes && product.sizes.length > 0 && (
+            <SizeSelector
+              sizes={product.sizes}
+              selectedSize={size}
+              onSelect={setSize}
+              availableSizes={availableSizesForColor}
+              label={sizeLabel}
+              showSizeGuide={showSizeGuide}
+            />
+          )}
 
           {/* Stock Feedback */}
           {size !== null && selectedVariant && (

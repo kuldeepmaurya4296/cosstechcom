@@ -73,11 +73,21 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const defaultSize = product.sizes?.[0] || 7;
+                const defaultSize = product.sizes?.[0] || "";
                 const defaultColor = product.colors?.[0] || "Default";
                 add(product, { size: defaultSize, color: defaultColor, quantity: 1 });
+
+                const displaySize = () => {
+                  const sStr = String(defaultSize || "").trim();
+                  if (!sStr) return "";
+                  const num = Number(sStr);
+                  const isShoe = !isNaN(num) && num > 0 && num < 20;
+                  return isShoe ? `UK/IND ${sStr}` : sStr;
+                };
+                const sizeDesc = displaySize() ? `Size: ${displaySize()} · ` : "";
+
                 toast.success(`Added ${product.name} to cart!`, {
-                  description: `Size: UK/IND ${defaultSize} · Color: ${defaultColor}`,
+                  description: `${sizeDesc}Color: ${defaultColor}`,
                 });
               }}
               className="w-full py-2.5 bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer border-0"

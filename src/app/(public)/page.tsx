@@ -31,22 +31,22 @@ const ICON_MAP: Record<string, any> = {
 };
 
 const DEFAULT_TRUST_BADGES = [
-  { icon: "Award", title: "Official Retailer", subtitle: "Lakhani, Touch, Paragon, Goldstar" },
-  { icon: "ShieldCheck", title: "Gupta Brothers Craft", subtitle: "Premium quality assurance" },
+  { icon: "Award", title: "Verified Sellers", subtitle: "100% authentic brands" },
+  { icon: "ShieldCheck", title: "Quality Assured", subtitle: "Rigorous standards check" },
   { icon: "Truck", title: "Free Shipping", subtitle: "Orders above ₹2000" },
   { icon: "RotateCcw", title: "Simple Exchanges", subtitle: "Within 30 days hassle-free" },
 ];
 
 export const metadata: Metadata = {
-  title: "CosstechCom — Ultimate Multi-Vendor Footwear Marketplace",
+  title: "CosstechCom — India's Online Multi-Vendor Marketplace",
   description:
-    "Shop premium footwear from multiple vendors, designers, and brands in India's leading footwear marketplace. Explore men's, women's, sports, and bridal collections.",
+    "Shop premium electronics, fashion, grocery, home decor, sports gear, and lifestyle products from verified multi-vendor brands in India.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "CosstechCom — Multi-Vendor Footwear Marketplace",
-    description: "Explore premium multi-vendor footwear collections.",
+    title: "CosstechCom — Multi-Vendor Online Marketplace",
+    description: "Explore quality multi-category products from verified sellers.",
     images: [{ url: "/assets/hero-boots.jpg" }],
   },
 };

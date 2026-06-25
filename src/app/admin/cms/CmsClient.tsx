@@ -32,8 +32,8 @@ import { ImageUploader } from "@/modules/admin/shared/components/ImageUploader";
 import { RichTextEditor } from "@/modules/admin/shared/components/RichTextEditor";
 
 const DEFAULT_TRUST_BADGES = [
-  { icon: "Award", title: "Official Retailer", subtitle: "Lakhani, Touch, Paragon, Goldstar" },
-  { icon: "ShieldCheck", title: "Gupta Brothers Craft", subtitle: "Premium quality assurance" },
+  { icon: "Award", title: "Verified Sellers", subtitle: "100% authentic brands" },
+  { icon: "ShieldCheck", title: "Quality Assured", subtitle: "Rigorous standards check" },
   { icon: "Truck", title: "Free Shipping", subtitle: "Orders above ₹2000" },
   { icon: "RotateCcw", title: "Simple Exchanges", subtitle: "Within 30 days hassle-free" },
 ];
@@ -1210,9 +1210,9 @@ function LegalTab({ settings }: { settings: any[] }) {
 function AnnouncementsTab({ settings }: { settings: any[] }) {
   const announcementsSetting = settings.find((s) => s.key === "announcements")?.value || {
     list: [
-      "Hand-stitched footwear",
-      "Free shipping over ₹2000",
-      "Official Lakhani · Paragon · Touch retailer",
+      "Welcome to CosstechCom Marketplace",
+      "Free shipping on orders over ₹2000",
+      "Top Brands. Verified Sellers. Great Deals.",
     ],
     isActive: true,
   };
@@ -1281,7 +1281,7 @@ function AnnouncementsTab({ settings }: { settings: any[] }) {
               rows={5}
               value={announcementsText}
               onChange={(e) => setAnnouncementsText(e.target.value)}
-              placeholder="e.g. Free shipping over ₹2000&#10;Official Lakhani retailer"
+              placeholder="e.g. Free shipping over ₹2000&#10;Verified Brands & Sellers"
               className="w-full p-3 border border-border rounded-lg bg-background font-sans text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
               disabled={isSubmitting}
             />

@@ -105,8 +105,8 @@ export function normalizeProduct(p: any) {
       new Set(p.variants ? p.variants.map((v: any) => String(v.color || "")) : p.colors || []),
     ) as string[],
     sizes: Array.from(
-      new Set(p.variants ? p.variants.map((v: any) => Number(v.size)) : p.sizes || []),
-    ) as number[],
+      new Set(p.variants ? p.variants.map((v: any) => v.size ? String(v.size) : "") : p.sizes || []),
+    ).filter(Boolean) as string[],
     stock: p.variants
       ? p.variants.reduce((acc: number, v: any) => acc + Number(v.stock || 0), 0)
       : p.stock !== undefined

@@ -17,7 +17,7 @@ export interface Product {
   price: number;
   compareAt?: number;
   variants?: {
-    size: number;
+    size: string | number;
     color: string;
     colorHex: string;
     stock: number;
@@ -29,7 +29,7 @@ export interface Product {
   description: string;
   details: string[];
   colors: string[];
-  sizes: number[];
+  sizes: (string | number)[];
   stock: number;
   rating: number;
   reviewsCount: number;

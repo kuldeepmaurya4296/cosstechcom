@@ -63,7 +63,7 @@ export function FlashSaleBanner() {
               ? `${activeSale.discountValue}%`
               : formatINR(activeSale.discountValue)}
           </span>{" "}
-          on selected footwear!
+          on selected items!
         </span>
       </div>
 

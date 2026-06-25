@@ -8,7 +8,7 @@ interface CartItemRowProps {
     productId: string;
     slug: string;
     name: string;
-    size: number;
+    size: string | number;
     color: string;
     price: number;
     image: string;
@@ -48,10 +48,18 @@ export function CartItemRow({ item, lineKey, onRemove, onQtyChange }: CartItemRo
               {item.name}
             </Link>
             <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-muted text-muted-foreground rounded-full border border-border/60">
-                <Package className="h-2.5 w-2.5" />
-                UK/IND {item.size}
-              </span>
+              {(() => {
+                const sStr = String(item.size || "").trim();
+                if (!sStr) return null;
+                const num = Number(sStr);
+                const isShoe = !isNaN(num) && num > 0 && num < 20;
+                return (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-muted text-muted-foreground rounded-full border border-border/60">
+                    <Package className="h-2.5 w-2.5" />
+                    {isShoe ? `UK/IND ${sStr}` : sStr}
+                  </span>
+                );
+              })()}
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-muted text-muted-foreground rounded-full border border-border/60">
                 <span
                   className="h-2 w-2 rounded-full border border-black/15 shrink-0"

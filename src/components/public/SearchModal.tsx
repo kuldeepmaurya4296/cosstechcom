@@ -143,7 +143,7 @@ export function SearchModal({ onClose, categoriesList }: SearchModalProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search for footwear, brands, or categories..."
+              placeholder="Search for products, brands, or categories..."
               className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-foreground placeholder:text-muted-foreground/60"
             />
             {searchQuery && (
@@ -221,7 +221,7 @@ export function SearchModal({ onClose, categoriesList }: SearchModalProps) {
                   No matches for "{searchQuery}"
                 </p>
                 <p className="text-xs text-muted-foreground/60 mt-1">
-                  Try a brand name like "Lakhani" or category like "bridal"
+                  Try a brand name like "Samsung" or category like "electronics"
                 </p>
               </div>
             )}

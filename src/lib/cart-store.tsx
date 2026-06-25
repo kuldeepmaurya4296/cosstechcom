@@ -9,7 +9,7 @@ export interface CartLine {
   name: string;
   price: number;
   image: string;
-  size: number;
+  size: string | number;
   color: string;
   quantity: number;
   slug: string;
@@ -18,7 +18,7 @@ export interface CartLine {
 interface CartCtx {
   lines: CartLine[];
   wishlist: string[];
-  add: (p: Product, opts: { size: number; color: string; quantity?: number }) => void;
+  add: (p: Product, opts: { size: string | number; color: string; quantity?: number }) => void;
   remove: (key: string) => void;
   setQty: (key: string, q: number) => void;
   clear: () => void;
@@ -30,7 +30,7 @@ interface CartCtx {
 const Ctx = createContext<CartCtx | null>(null);
 const KEY = "coss-cart-v1";
 const WKEY = "coss-wish-v1";
-const lineKey = (l: { productId: string; size: number; color: string }) =>
+const lineKey = (l: { productId: string; size: string | number; color: string }) =>
   `${l.productId}-${l.size}-${l.color}`;
 
 export function CartProvider({ children }: { children: ReactNode }) {

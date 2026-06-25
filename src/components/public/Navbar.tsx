@@ -32,9 +32,9 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [announcements, setAnnouncements] = useState<string[]>([
-    "Hand-stitched footwear",
-    "Free shipping over ₹2000",
-    "Official Lakhani · Paragon · Touch retailer",
+    "Welcome to CosstechCom Marketplace",
+    "Free shipping on orders over ₹2000",
+    "Top Brands. Verified Sellers. Great Deals.",
   ]);
   const [announcementsActive, setAnnouncementsActive] = useState(true);
 
@@ -225,7 +225,7 @@ export function Navbar() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4 relative">
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden p-2 -ml-2 hover:bg-muted rounded-xl transition cursor-pointer"
+            className="xl:hidden p-2 -ml-2 hover:bg-muted rounded-xl transition cursor-pointer"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label="Open menu"
           >
@@ -235,10 +235,10 @@ export function Navbar() {
           <Logo size={36} />
 
           {/* Desktop Navigation mega-menus */}
-          <nav className="hidden md:flex items-center gap-6 flex-1 justify-center">
+          <nav className="hidden xl:flex items-center gap-x-4 xl:gap-x-6 flex-initial justify-center">
             <Link
               href="/shop"
-              className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] pb-1 border-b-2 ${path === "/shop" && !searchParams.get("category")
+              className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] pb-1 border-b-2 whitespace-nowrap ${path === "/shop" && !searchParams.get("category")
                   ? "border-primary text-primary"
                   : "border-transparent text-foreground/75 hover:border-primary/40"
                 }`}
@@ -256,7 +256,7 @@ export function Navbar() {
                   onMouseLeave={() => setActiveMega(null)}
                 >
                   <button
-                    className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 ${isActive
+                    className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 whitespace-nowrap ${isActive
                         ? "border-primary text-primary"
                         : "border-transparent text-foreground/75 hover:border-primary/40"
                       }`}
@@ -401,7 +401,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 border border-border/60 rounded-full hover:bg-muted text-xs font-bold tracking-wide uppercase transition-all ml-1"
+                className="hidden lg:inline-flex items-center gap-1.5 px-4 py-1.5 border border-border/60 rounded-full hover:bg-muted text-xs font-bold tracking-wide uppercase transition-all ml-1"
               >
                 <User className="h-3.5 w-3.5" />
                 Sign In

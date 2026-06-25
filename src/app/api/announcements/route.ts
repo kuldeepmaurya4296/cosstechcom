@@ -10,9 +10,9 @@ export async function GET() {
     const doc = await Settings.findOne({ key: "announcements" }).lean();
     return NextResponse.json({
       list: doc?.value?.list || [
-        "Hand-stitched footwear",
-        "Free shipping over ₹2000",
-        "Official Lakhani · Paragon · Touch retailer",
+        "Welcome to CosstechCom Marketplace",
+        "Free shipping on orders over ₹2000",
+        "Top Brands. Verified Sellers. Great Deals.",
       ],
       isActive: doc?.value?.isActive ?? true,
     });
