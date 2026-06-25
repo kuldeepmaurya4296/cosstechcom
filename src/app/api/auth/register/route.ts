@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     // Rate limit: 5 registrations per IP per minute
     const ip = getClientIp(request);
-    const limiter = rateLimit(`register:${ip}`, { limit: 5, windowSeconds: 60 });
+    const limiter = await rateLimit(`register:${ip}`, { limit: 5, windowSeconds: 60 });
     if (!limiter.allowed) {
       return NextResponse.json(
         {

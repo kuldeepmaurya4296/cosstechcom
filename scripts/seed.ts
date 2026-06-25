@@ -43,6 +43,13 @@ const VendorProfile = (await import("../src/lib/models/VendorProfile")).default;
 const Counter = (await import("../src/lib/models/Counter")).default;
 const FlashSale = (await import("../src/lib/models/FlashSale")).default;
 
+// New models for Phase 1.6
+const Wallet = (await import("../src/lib/models/Wallet")).default;
+const WalletTransaction = (await import("../src/lib/models/WalletTransaction")).default;
+const Notification = (await import("../src/lib/models/Notification")).default;
+const Referral = (await import("../src/lib/models/Referral")).default;
+const TaxConfig = (await import("../src/lib/models/TaxConfig")).default;
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
@@ -72,6 +79,27 @@ const COLOR_HEXES: Record<string, string> = {
   purple: "#8B5CF6",
 };
 
+// Department configuration mapping for tax rates & HSN codes
+interface IDepartmentTax {
+  cgst: number;
+  sgst: number;
+  igst: number;
+  hsn: string;
+}
+
+const DEPARTMENT_TAXES: Record<string, IDepartmentTax> = {
+  "electronics": { cgst: 9, sgst: 9, igst: 18, hsn: "8517" },
+  "fashion": { cgst: 6, sgst: 6, igst: 12, hsn: "6109" },
+  "grocery": { cgst: 0, sgst: 0, igst: 0, hsn: "1006" },
+  "home-furniture": { cgst: 9, sgst: 9, igst: 18, hsn: "9403" },
+  "sports-fitness": { cgst: 6, sgst: 6, igst: 12, hsn: "9506" },
+  "appliances": { cgst: 9, sgst: 9, igst: 18, hsn: "8418" },
+  "electrical": { cgst: 9, sgst: 9, igst: 18, hsn: "8536" },
+  "beauty": { cgst: 9, sgst: 9, igst: 18, hsn: "3304" },
+  "books": { cgst: 0, sgst: 0, igst: 0, hsn: "4901" },
+  "baby-kids": { cgst: 6, sgst: 6, igst: 12, hsn: "9503" },
+};
+
 async function seed() {
   try {
     console.log("Connecting to the database...");
@@ -81,7 +109,7 @@ async function seed() {
     }
     console.log("Connected successfully. Cleaning up collections...");
 
-    // Delete existing records to perform a clean seed (preserves index definitions)
+    // Delete existing records
     await User.deleteMany({});
     await Product.deleteMany({});
     await Category.deleteMany({});
@@ -92,6 +120,13 @@ async function seed() {
     await VendorProfile.deleteMany({});
     await Counter.deleteMany({});
     await FlashSale.deleteMany({});
+    
+    // Cleanup new models
+    await Wallet.deleteMany({});
+    await WalletTransaction.deleteMany({});
+    await Notification.deleteMany({});
+    await Referral.deleteMany({});
+    await TaxConfig.deleteMany({});
 
     console.log("Cleanup complete. Seeding settings...");
 
@@ -132,7 +167,7 @@ async function seed() {
       isEmailVerified: true,
     });
 
-    // Create Vendors
+    // Create Vendors (5 approved vendors)
     const vendorData = [
       { name: "Apex Electronics", email: "vendor.electronics@cosstechcom.com", store: "Apex Electronics", slug: "apex-electronics" },
       { name: "Vogue Clothing", email: "vendor.fashion@cosstechcom.com", store: "Vogue Fashion", slug: "vogue-fashion" },
@@ -174,6 +209,19 @@ async function seed() {
         verificationStatus: "approved",
         approvedBy: admin._id,
         approvedAt: new Date(),
+        kycStatus: "verified",
+        bankVerified: true,
+        gstinVerified: true,
+        panVerified: true,
+        agreementSignedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        tcsRate: 0.5,
+      });
+
+      // Initialize Vendor Wallet
+      await Wallet.create({
+        userId: vendorUser._id,
+        balance: 15000,
+        isActive: true,
       });
 
       vendors.push(vendorUser);
@@ -208,6 +256,7 @@ async function seed() {
       },
       commissionRate: 12,
       verificationStatus: "pending",
+      kycStatus: "pending",
     });
 
     // Create Customers
@@ -215,10 +264,13 @@ async function seed() {
       name: "Rahul Sharma",
       email: "rahul.sharma@example.com",
       password: customerPasswordHash,
+      phone: "+919876543210",
+      isPhoneVerified: true,
       role: "customer",
       walletBalance: 250,
       isActive: true,
       isEmailVerified: true,
+      referralCode: "RAHUL50",
       addresses: [
         {
           label: "Home",
@@ -238,10 +290,14 @@ async function seed() {
       name: "Priya Patel",
       email: "priya.patel@example.com",
       password: customerPasswordHash,
+      phone: "+919123456789",
+      isPhoneVerified: true,
       role: "customer",
       walletBalance: 0,
       isActive: true,
       isEmailVerified: true,
+      referralCode: "PRIYA10",
+      referredBy: customer1._id,
       addresses: [
         {
           label: "Work",
@@ -260,14 +316,64 @@ async function seed() {
       name: "Amit Verma",
       email: "amit.verma@example.com",
       password: customerPasswordHash,
+      phone: "+919988776655",
+      isPhoneVerified: true,
       role: "customer",
       walletBalance: 100,
       isActive: true,
       isEmailVerified: true,
+      referralCode: "AMIT100",
     });
 
+    // Create Customer Wallets
+    const wallets = [
+      { userId: customer1._id, balance: 250 },
+      { userId: customer2._id, balance: 0 },
+      { userId: customer3._id, balance: 100 },
+    ];
+    for (const w of wallets) {
+      const wallet = await Wallet.create({
+        userId: w.userId,
+        balance: w.balance,
+        isActive: true,
+      });
+
+      if (w.balance > 0) {
+        await WalletTransaction.create({
+          walletId: wallet._id,
+          type: "credit",
+          amount: w.balance,
+          balanceAfter: w.balance,
+          description: "Sign-up promotional bonus",
+          referenceType: "manual",
+          status: "completed",
+        });
+      }
+    }
+
+    // Seed Referrals
+    await Referral.create({
+      referrerId: customer1._id,
+      referredUserId: customer2._id,
+      code: "RAHUL50",
+      reward: 50,
+      status: "pending",
+    });
+
+    // Seed Notifications
+    const usersToNotify = [customer1._id, customer2._id, customer3._id, admin._id];
+    for (const uId of usersToNotify) {
+      await Notification.create({
+        userId: uId,
+        type: "system",
+        title: "Welcome to CosstechCom!",
+        message: "Your account is active. Explore our 10 departments and enjoy seamless shopping.",
+        isRead: false,
+      });
+    }
+
     // Create Delivery Partners
-    const delivery1 = await User.create({
+    await User.create({
       name: "Rajesh Express",
       email: "delivery.partner1@cosstechcom.com",
       password: deliveryPasswordHash,
@@ -276,7 +382,7 @@ async function seed() {
       isEmailVerified: true,
     });
 
-    const delivery2 = await User.create({
+    await User.create({
       name: "Vikram Cargo",
       email: "delivery.partner2@cosstechcom.com",
       password: deliveryPasswordHash,
@@ -286,7 +392,7 @@ async function seed() {
     });
 
     // Create Support Agent
-    const support = await User.create({
+    await User.create({
       name: "Sonia Care",
       email: "support.agent1@cosstechcom.com",
       password: supportPasswordHash,
@@ -295,9 +401,9 @@ async function seed() {
       isEmailVerified: true,
     });
 
-    console.log("Seeding 3-level categories...");
+    console.log("Seeding 3-level categories (10 departments)...");
 
-    // 4. Seed Categories (10 Departments -> Sub-categories)
+    // 4. Seed Categories (10 Departments -> Sub-categories -> Leaf Categories)
     const departmentsData = [
       {
         name: "Electronics",
@@ -355,6 +461,62 @@ async function seed() {
           { name: "Sports Gear", slug: "sports-gear", subSubs: ["Cricket Bats", "Football"] },
         ],
       },
+      // New categories for v2.0
+      {
+        name: "Appliances",
+        slug: "appliances",
+        icon: "Tv",
+        imageUrl: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?q=80&w=1200&auto=format&fit=crop",
+        subs: [
+          { name: "Large Appliances", slug: "large-appliances", subSubs: ["Refrigerators", "Washing Machines"] },
+          { name: "Small Appliances", slug: "small-appliances", subSubs: ["Microwaves", "Blenders"] },
+        ],
+      },
+      {
+        name: "Electrical",
+        slug: "electrical",
+        icon: "Zap",
+        imageUrl: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=1200&auto=format&fit=crop",
+        subs: [
+          { name: "Lighting", slug: "lighting", subSubs: ["LED Bulbs", "Ceiling Lights"] },
+          { name: "Wiring & Switches", slug: "wiring-switches", subSubs: ["Switchboards", "Extension Cords"] },
+        ],
+      },
+      {
+        name: "Beauty",
+        slug: "beauty",
+        icon: "Sparkles",
+        imageUrl: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=1200&auto=format&fit=crop",
+        subs: [
+          { name: "Makeup", slug: "makeup", subSubs: ["Lipsticks", "Foundations"] },
+          { name: "Skincare", slug: "skincare", subSubs: ["Moisturizers", "Face Wash"] },
+        ],
+      },
+      {
+        name: "Books",
+        slug: "books",
+        icon: "BookOpen",
+        imageUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1200&auto=format&fit=crop",
+        subs: [
+          { name: "Fiction", slug: "fiction", subSubs: ["Novels", "Sci-Fi"] },
+          { name: "Academic", slug: "academic", subSubs: ["Textbooks", "Exam Preparation"] },
+        ],
+      },
+      {
+        name: "Baby & Kids",
+        slug: "baby-kids",
+        icon: "Smile",
+        imageUrl: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=1200&auto=format&fit=crop",
+        subs: [
+          { name: "Baby Care", slug: "baby-care", subSubs: ["Diapers", "Wipes"] },
+          { name: "Toys", slug: "toys", subSubs: ["Board Games", "Dolls"] },
+        ],
+      },
     ];
 
     const categoryMap = new Map<string, mongoose.Types.ObjectId>();
@@ -373,6 +535,9 @@ async function seed() {
       });
       categoryMap.set(dept.slug, level1Doc._id);
 
+      // Create TaxConfig for Level 1 as default/fallback
+      const taxRateData = DEPARTMENT_TAXES[dept.slug] || { cgst: 9, sgst: 9, igst: 18, hsn: "0000" };
+
       for (const sub of dept.subs) {
         // Level 2: Sub-category
         const level2Doc = await Category.create({
@@ -386,15 +551,26 @@ async function seed() {
 
         for (const subSubName of sub.subSubs) {
           const subSubSlug = subSubName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          const fullLeafSlug = `${dept.slug}-${sub.slug}-${subSubSlug}`;
+          
           // Level 3: Leaf-category
           const level3Doc = await Category.create({
             name: subSubName,
-            slug: `${dept.slug}-${sub.slug}-${subSubSlug}`,
+            slug: fullLeafSlug,
             level: 3,
             parentId: level2Doc._id,
             commissionRate: 10,
           });
-          categoryMap.set(`${dept.slug}-${sub.slug}-${subSubSlug}`, level3Doc._id);
+          categoryMap.set(fullLeafSlug, level3Doc._id);
+
+          // Seed TaxConfig for Leaf Category
+          await TaxConfig.create({
+            categoryId: level3Doc._id,
+            hsnCode: taxRateData.hsn,
+            cgstRate: taxRateData.cgst,
+            sgstRate: taxRateData.sgst,
+            igstRate: taxRateData.igst,
+          });
         }
       }
     }
@@ -413,6 +589,11 @@ async function seed() {
       { name: "Godrej", order: 8 },
       { name: "Prestige", order: 9 },
       { name: "Decathlon", order: 10 },
+      { name: "Philips", order: 11 },
+      { name: "L'Oreal", order: 12 },
+      { name: "Oxford University Press", order: 13 },
+      { name: "Pampers", order: 14 },
+      { name: "Lego", order: 15 },
       { name: "Generic Brand", order: 99 },
     ];
 
@@ -426,7 +607,7 @@ async function seed() {
       brandMap.set(b.name, brandDoc._id);
     }
 
-    console.log("Seeding products...");
+    console.log("Seeding hand-crafted products...");
 
     // 6. Seed Products (Realistic listings mapped to appropriate vendors)
     const productTemplates = [
@@ -452,6 +633,7 @@ async function seed() {
           { key: "Battery", value: "5000 mAh" },
         ],
         tags: ["mobile", "samsung", "smartphone", "flagship"],
+        hsnCode: "8517",
       },
       {
         name: "HP Pavilion 15 Laptop",
@@ -473,6 +655,7 @@ async function seed() {
           { key: "OS", value: "Windows 11 Home" },
         ],
         tags: ["hp", "laptop", "office", "student"],
+        hsnCode: "8517",
       },
       {
         name: "JBL Wave Flex Earbuds",
@@ -494,6 +677,7 @@ async function seed() {
           { key: "Bluetooth", value: "v5.2" },
         ],
         tags: ["audio", "earbuds", "jbl", "wireless"],
+        hsnCode: "8518",
       },
       // Fashion (Nike/Sabyasachi -> Vendor 2 (Vogue Fashion))
       {
@@ -517,6 +701,7 @@ async function seed() {
           { key: "Occasion", value: "Sports & Casual" },
         ],
         tags: ["nike", "sneakers", "running", "shoes"],
+        hsnCode: "6404",
       },
       {
         name: "Sabyasachi Designer Banarasi Saree",
@@ -537,6 +722,7 @@ async function seed() {
           { key: "Craft", value: "Handloom Weaving" },
         ],
         tags: ["saree", "silk", "designer", "wedding", "bridal"],
+        hsnCode: "5007",
       },
       // Grocery (Tata Tea/Patanjali -> Vendor 3 (FreshCart Grocery))
       {
@@ -557,6 +743,7 @@ async function seed() {
           { key: "Form", value: "Tea Leaves" },
         ],
         tags: ["tea", "tata", "beverage", "grocery"],
+        hsnCode: "0902",
       },
       {
         name: "Patanjali Basmati Rice Premium",
@@ -576,8 +763,9 @@ async function seed() {
           { key: "Grain Type", value: "Basmati Long Grain" },
         ],
         tags: ["rice", "grocery", "staples", "patanjali"],
+        hsnCode: "1006",
       },
-      // Home & Furniture (Godrej/Prestige -> Vendor 4 (DecoWood Home))
+      // Home & Furniture (Godrej -> Vendor 4 (DecoWood Home))
       {
         name: "DecoWood 3-Seater Fabric Sofa",
         description: "Modern, comfortable fabric sofa with solid wood framing and premium foam cushioning.",
@@ -597,6 +785,7 @@ async function seed() {
           { key: "Dimensions", value: "78 x 32 x 34 Inches" },
         ],
         tags: ["sofa", "furniture", "living-room", "home"],
+        hsnCode: "9403",
       },
       {
         name: "Prestige Omega Non-Stick Pan",
@@ -617,6 +806,7 @@ async function seed() {
           { key: "Induction Base", value: "Yes" },
         ],
         tags: ["pan", "cookware", "kitchen", "prestige"],
+        hsnCode: "7323",
       },
       // Sports & Fitness (Decathlon -> Vendor 5 (ActiveSports Co))
       {
@@ -639,9 +829,78 @@ async function seed() {
           { key: "Grip", value: "Knurled Steel" },
         ],
         tags: ["dumbbells", "gym", "decathlon", "fitness"],
+        hsnCode: "9506",
+      },
+      // Appliances
+      {
+        name: "Philips Smart LED TV 55 Inch",
+        description: "4K Ultra HD Smart LED TV with Dolby Vision and Google Assistant integration.",
+        price: 54999,
+        salePrice: 42999,
+        categorySlug: "appliances-large-appliances-refrigerators", // Map to first leaf for ease
+        brandName: "Philips",
+        vendorIndex: 0,
+        gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=600&q=80",
+        variants: [
+          { size: "55 Inch", color: "Glossy Black", colorHex: COLOR_HEXES.black, stock: 12, sku: "PHL-TV-55-BL" },
+        ],
+        specifications: [
+          { key: "Screen Size", value: "55 Inches" },
+          { key: "Resolution", value: "4K Ultra HD" },
+          { key: "Smart Platform", value: "Google TV" },
+        ],
+        tags: ["tv", "led", "philips", "4k"],
+        hsnCode: "8528",
+      },
+      // Beauty
+      {
+        name: "L'Oreal Paris Revitalift Serum",
+        description: "Anti-aging hyaluronic acid facial serum to intensely hydrate and replump skin.",
+        price: 999,
+        salePrice: 799,
+        categorySlug: "beauty-skincare-moisturizers",
+        brandName: "L'Oreal",
+        vendorIndex: 1,
+        gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+        variants: [
+          { size: "30 ml", color: "Clear Serum", colorHex: COLOR_HEXES.cream, stock: 150, sku: "LOR-REV-30" },
+        ],
+        specifications: [
+          { key: "Volume", value: "30 ml" },
+          { key: "Active Ingredient", value: "1.5% Hyaluronic Acid" },
+        ],
+        tags: ["skincare", "serum", "loreal", "beauty"],
+        hsnCode: "3304",
+      },
+      // Books
+      {
+        name: "Oxford Dictionary of English",
+        description: "The foremost authority on the English language, with comprehensive definition sets.",
+        price: 1999,
+        salePrice: 1699,
+        categorySlug: "books-academic-textbooks",
+        brandName: "Oxford University Press",
+        vendorIndex: 3,
+        gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80",
+        variants: [
+          { size: "Hardcover", color: "Blue Jacket", colorHex: COLOR_HEXES.blue, stock: 40, sku: "OXF-DICT-HC" },
+        ],
+        specifications: [
+          { key: "Edition", value: "3rd Edition" },
+          { key: "Format", value: "Hardcover" },
+        ],
+        tags: ["dictionary", "books", "oxford", "english"],
+        hsnCode: "4901",
       },
     ];
 
+    // Store seeded products
+    const seededProductsList: any[] = [];
+
+    // Create the hand-crafted products
     for (const t of productTemplates) {
       const categoryId = categoryMap.get(t.categorySlug);
       const brandId = brandMap.get(t.brandName) || brandMap.get("Generic Brand");
@@ -664,7 +923,7 @@ async function seed() {
         ],
       }));
 
-      await Product.create({
+      const productDoc = await Product.create({
         name: t.name,
         slug,
         description: t.description,
@@ -691,14 +950,157 @@ async function seed() {
         freeShipping: t.salePrice > 1000,
         estimatedDeliveryDays: 4,
         tags: t.tags,
+        countryOfOrigin: "India",
+        mfgDetails: `${t.brandName} Industries, Manufacturing Hub, India`,
+        netQuantity: enrichedVariants[0]?.size || "1 Unit",
+        hsnCode: t.hsnCode || "0000",
         metaTitle: `${t.name} - Buy Online | CosstechCom`,
         metaDescription: t.description.substring(0, 150),
       });
+
+      seededProductsList.push(productDoc);
     }
+
+    console.log("Dynamically generating remaining products to reach 100+ listings...");
+
+    // 7. Seed remaining products dynamically to have 100+ products
+    // We want at least 100 products. We have ~12 hand-crafted.
+    // Let's loop over all Level 3 (leaf) categories and add products for each until we have 110 products.
+    const allLeafCategories = await Category.find({ level: 3 });
+    const allBrandsList = await Brand.find({ isActive: true });
+    
+    // Sample images by department for rich visuals
+    const deptImageMap: Record<string, string[]> = {
+      "electronics": [
+        "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
+      ],
+      "fashion": [
+        "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=600&q=80"
+      ],
+      "grocery": [
+        "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80"
+      ],
+      "home-furniture": [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=600&q=80"
+      ],
+      "sports-fitness": [
+        "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1605296867304-46d5465a25f1?auto=format&fit=crop&w=600&q=80"
+      ],
+      "appliances": [
+        "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?auto=format&fit=crop&w=600&q=80"
+      ],
+      "electrical": [
+        "https://images.unsplash.com/photo-1565814636199-ae8133055c1c?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80"
+      ],
+      "beauty": [
+        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=600&q=80"
+      ],
+      "books": [
+        "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=600&q=80"
+      ],
+      "baby-kids": [
+        "https://images.unsplash.com/photo-1515488042361-404e9250afef?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&w=600&q=80"
+      ],
+    };
+
+    let generatedCount = 0;
+    const targetCount = 110;
+    const currentCount = seededProductsList.length;
+
+    // Loop until we reach 110 products
+    for (let i = 0; i < targetCount - currentCount; i++) {
+      const category = allLeafCategories[i % allLeafCategories.length];
+      
+      // Determine department slug
+      let deptSlug = "electronics";
+      for (const dSlug of Object.keys(deptImageMap)) {
+        if (category.slug.startsWith(dSlug)) {
+          deptSlug = dSlug;
+          break;
+        }
+      }
+
+      // Pick a vendor (0-4)
+      const vendorIndex = i % vendors.length;
+      const vendorUser = vendors[vendorIndex];
+
+      // Pick a brand
+      const brandId = allBrandsList[i % allBrandsList.length]._id;
+
+      // Select random image
+      const imagesList = deptImageMap[deptSlug] || deptImageMap["electronics"];
+      const imageUrl = imagesList[i % imagesList.length];
+
+      const price = Math.round(200 + Math.random() * 9800);
+      const salePrice = Math.round(price * 0.9); // 10% off
+      
+      const prodName = `${category.name} Premium Pro Model ${100 + i}`;
+      const slug = `${prodName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}`;
+      
+      const sizeValue = deptSlug === "fashion" ? `${7 + (i % 4)}` : (deptSlug === "electronics" ? "128GB" : "Standard");
+
+      const productDoc = await Product.create({
+        name: prodName,
+        slug: slug,
+        description: `Premium high-quality ${category.name} designed for excellent daily performance and efficiency.`,
+        brand: brandId,
+        vendorId: vendorUser._id,
+        category: category._id,
+        gender: deptSlug === "fashion" ? (i % 2 === 0 ? "Men" : "Women") : "None",
+        images: [{ url: imageUrl, public_id: `dynamic-placeholder-${slug}` }],
+        variants: [
+          {
+            size: sizeValue,
+            color: "Carbon Black",
+            colorHex: COLOR_HEXES.black,
+            stock: 30,
+            sku: `COSS-PROD-${i}-${Date.now().toString().slice(-4)}`
+          }
+        ],
+        price: price,
+        salePrice: salePrice,
+        returnDays: 7,
+        rating: { average: 4.2, count: 1 },
+        isFeatured: Math.random() > 0.7,
+        isNewArrival: true,
+        isActive: true,
+        approvalStatus: "approved",
+        specifications: [
+          { key: "Warranty", value: "1 Year Domestic Warranty" },
+          { key: "Country of Origin", value: "India" }
+        ],
+        freeShipping: salePrice > 1000,
+        estimatedDeliveryDays: 3,
+        tags: [deptSlug, category.name.toLowerCase()],
+        countryOfOrigin: "India",
+        mfgDetails: "CosstechCom Trusted Vendor Network, India",
+        netQuantity: "1 Unit",
+        hsnCode: DEPARTMENT_TAXES[deptSlug]?.hsn || "0000",
+        metaTitle: `${prodName} - Lowest Price Online | CosstechCom`,
+        metaDescription: `Buy ${prodName} at the best price online with fast delivery, secure payments, and easy returns on CosstechCom.`,
+      });
+
+      seededProductsList.push(productDoc);
+      generatedCount++;
+    }
+
+    console.log(`Successfully generated ${generatedCount} dynamic products. Total catalog size: ${seededProductsList.length}.`);
 
     console.log("Seeding banners...");
 
-    // 7. Seed Banners (Marketplace style)
+    // 8. Seed Banners (Marketplace style)
     await Banner.create([
       {
         title: "Big Electronics Sale",
@@ -728,7 +1130,7 @@ async function seed() {
 
     console.log("Seeding coupons...");
 
-    // 8. Seed Coupons
+    // 9. Seed Coupons
     await Coupon.create([
       {
         code: "WELCOME50",

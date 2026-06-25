@@ -44,6 +44,14 @@ export interface IProduct extends Document {
   tags: string[];
   metaTitle?: string;
   metaDescription?: string;
+  
+  // Legal compliance & tax details
+  countryOfOrigin?: string;
+  mfgDetails?: string;
+  netQuantity?: string;
+  hsnCode?: string;
+  searchVector?: number[]; // For vector embeddings / advanced search
+  
   createdAt: Date;
   updatedAt: Date;
 }
@@ -123,6 +131,13 @@ const ProductSchema: Schema = new Schema(
     tags: [{ type: String }],
     metaTitle: { type: String },
     metaDescription: { type: String },
+    
+    // Legal compliance & tax
+    countryOfOrigin: { type: String, trim: true },
+    mfgDetails: { type: String, trim: true },
+    netQuantity: { type: String, trim: true },
+    hsnCode: { type: String, trim: true, index: true },
+    searchVector: [{ type: Number }], // For vector search
   },
   { timestamps: true },
 );

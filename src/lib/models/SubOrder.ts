@@ -35,17 +35,24 @@ export interface ISubOrder extends Document {
     | "RETURNED"
     | "REFUNDED";
   statusHistory: ISubOrderHistory[];
+  
+  // Shipping Integration
+  shippingOrderId?: mongoose.Types.ObjectId; // New: reference to ShippingOrder document
+  awbNumber?: string; // New: tracking number from shipping aggregator
+  
   shipping: {
     courier?: string;
     trackingNumber?: string;
     trackingUrl?: string;
     deliveryPartnerId?: mongoose.Types.ObjectId;
   };
+  
   pricing: {
     subtotal: number;
     shippingCost: number;
     taxRate: number;
     tax: number;
+    tcsAmount: number; // New: TCS collected under Section 52
     couponDiscount: number;
     pointsDiscount: number;
     total: number;
@@ -53,6 +60,12 @@ export interface ISubOrder extends Document {
     commissionRate: number;
     vendorPayout: number;
   };
+
+  invoiceId?: mongoose.Types.ObjectId; // New: reference to tax invoice
+  deliveryOtp?: string; // New: OTP for secure delivery confirmation
+  codAmount?: number; // New: cash amount to collect
+  codCollected?: boolean; // New: COD collection confirmation status
+  
   payoutStatus: "PENDING" | "PROCESSING" | "COMPLETED";
   payoutId?: mongoose.Types.ObjectId;
   deliveryEstimate?: Date;
@@ -103,6 +116,11 @@ const SubOrderSchema = new Schema(
       index: true,
     },
     statusHistory: [SubOrderHistorySchema],
+    
+    // Shipping Integration
+    shippingOrderId: { type: Schema.Types.ObjectId, ref: "ShippingOrder", index: true },
+    awbNumber: { type: String, index: true },
+
     shipping: {
       courier: { type: String },
       trackingNumber: { type: String },
@@ -114,6 +132,7 @@ const SubOrderSchema = new Schema(
       shippingCost: { type: Number, required: true, default: 0 },
       taxRate: { type: Number, default: 0 },
       tax: { type: Number, default: 0 },
+      tcsAmount: { type: Number, default: 0 }, // New: tcsAmount
       couponDiscount: { type: Number, default: 0 },
       pointsDiscount: { type: Number, default: 0 },
       total: { type: Number, required: true },
@@ -121,6 +140,11 @@ const SubOrderSchema = new Schema(
       commissionRate: { type: Number, required: true, default: 10 },
       vendorPayout: { type: Number, required: true },
     },
+    invoiceId: { type: Schema.Types.ObjectId, ref: "Invoice", index: true }, // New: invoiceId
+    deliveryOtp: { type: String }, // New: deliveryOtp
+    codAmount: { type: Number, default: 0 }, // New: codAmount
+    codCollected: { type: Boolean, default: false }, // New: codCollected
+
     payoutStatus: {
       type: String,
       enum: ["PENDING", "PROCESSING", "COMPLETED"],

@@ -19,6 +19,13 @@ export interface IUser extends Document {
   googleId?: string;
   avatar?: string;
   phone?: string;
+  isPhoneVerified: boolean;
+  otp?: string;
+  otpExpiresAt?: Date;
+  twoFactorEnabled: boolean;
+  referralCode?: string;
+  referredBy?: mongoose.Types.ObjectId;
+  subAdminPermissions: string[];
   role: "customer" | "admin" | "vendor" | "delivery_partner" | "support";
   vendorStatus?: "pending" | "approved" | "rejected" | "suspended" | null;
   storeName?: string;
@@ -52,7 +59,14 @@ const UserSchema: Schema = new Schema(
     password: { type: String },
     googleId: { type: String, index: true },
     avatar: { type: String },
-    phone: { type: String },
+    phone: { type: String, index: true },
+    isPhoneVerified: { type: Boolean, default: false },
+    otp: { type: String },
+    otpExpiresAt: { type: Date },
+    twoFactorEnabled: { type: Boolean, default: false },
+    referralCode: { type: String, unique: true, sparse: true, trim: true },
+    referredBy: { type: Schema.Types.ObjectId, ref: "User" },
+    subAdminPermissions: [{ type: String }],
     role: { 
       type: String, 
       enum: ["customer", "admin", "vendor", "delivery_partner", "support"], 

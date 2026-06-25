@@ -27,6 +27,15 @@ export interface IVendorProfile extends Document {
   verificationDocuments: string[];
   approvedAt?: Date;
   approvedBy?: mongoose.Types.ObjectId;
+  
+  // KYC & Verification fields
+  kycStatus: "pending" | "submitted" | "verified" | "rejected";
+  bankVerified: boolean;
+  gstinVerified: boolean;
+  panVerified: boolean;
+  agreementSignedAt?: Date;
+  tcsRate: number; // e.g. 0.5 for 0.5% GST TCS
+  
   sellerScore: {
     cancellationRate: number;
     returnRate: number;
@@ -71,6 +80,20 @@ const VendorProfileSchema = new Schema(
     verificationDocuments: [{ type: String }],
     approvedAt: { type: Date },
     approvedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    
+    // KYC & Verification
+    kycStatus: {
+      type: String,
+      enum: ["pending", "submitted", "verified", "rejected"],
+      default: "pending",
+      index: true,
+    },
+    bankVerified: { type: Boolean, default: false },
+    gstinVerified: { type: Boolean, default: false },
+    panVerified: { type: Boolean, default: false },
+    agreementSignedAt: { type: Date },
+    tcsRate: { type: Number, default: 0.5 }, // 0.5% default TCS rate
+
     sellerScore: {
       cancellationRate: { type: Number, default: 0 },
       returnRate: { type: Number, default: 0 },

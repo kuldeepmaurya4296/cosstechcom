@@ -1,21 +1,31 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import Product from "@/lib/models/Product";
-import Category from "@/lib/models/Category";
-import { products as fallbackProducts } from "@/data/products";
 import { ensureDbReady, normalizeProduct } from "@/lib/db-utils";
 import { cachedJson } from "@/lib/api-cache";
+import { searchProducts } from "@/lib/search";
+import { products as fallbackProducts } from "@/data/products";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q") || "";
+    const categorySlug = searchParams.get("category") || undefined;
+    const brandName = searchParams.get("brand") || undefined;
+    const minPriceStr = searchParams.get("minPrice");
+    const maxPriceStr = searchParams.get("maxPrice");
+    const sortBy = searchParams.get("sort") || undefined; // price_asc, price_desc, rating, newest
+    const limitStr = searchParams.get("limit");
+    const skipStr = searchParams.get("skip");
 
-    if (!query.trim()) {
+    if (!query.trim() && !categorySlug && !brandName) {
       return NextResponse.json([]);
     }
 
-    const { db, isReady } = await ensureDbReady();
+    const minPrice = minPriceStr ? parseFloat(minPriceStr) : undefined;
+    const maxPrice = maxPriceStr ? parseFloat(maxPriceStr) : undefined;
+    const limit = limitStr ? parseInt(limitStr) : 16;
+    const skip = skipStr ? parseInt(skipStr) : 0;
+
+    const { isReady } = await ensureDbReady();
     if (!isReady) {
       console.warn("Using local mock products fallback for search (database offline).");
       const normalizedQuery = query.toLowerCase().trim();
@@ -23,48 +33,26 @@ export async function GET(request: Request) {
         .map((p) => normalizeProduct(p))
         .filter(
           (p: any) =>
+            !normalizedQuery ||
             p.name?.toLowerCase().includes(normalizedQuery) ||
             p.description?.toLowerCase().includes(normalizedQuery) ||
             p.brand?.toLowerCase().includes(normalizedQuery) ||
             p.category?.toLowerCase().includes(normalizedQuery),
         );
-      return NextResponse.json(results);
+      return NextResponse.json(results.slice(skip, skip + limit));
     }
 
-    function escapeRegExp(str: string) {
-      return str.replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
-    }
-
-    // Search query matches name, brand, description, tags, category slug
-    const regex = new RegExp(escapeRegExp(query), "i");
-
-    // Fetch categories matching the query to also search by category names/slugs
-    const matchingCategories = await Category.find({
-      $or: [{ name: regex }, { slug: regex }],
-    })
-      .select("_id")
-      .lean();
-    const categoryIds = matchingCategories.map((c) => c._id);
-
-    // Fetch brands matching the query
-    const Brand = (await import("@/lib/models/Brand")).default;
-    const matchingBrands = await Brand.find({ name: regex }).select("_id").lean();
-    const brandIds = matchingBrands.map((b: any) => b._id);
-
-    const products = await Product.find({
-      isActive: true,
-      $or: [
-        { name: regex },
-        { description: regex },
-        { tags: regex },
-        { category: { $in: categoryIds } },
-        ...(brandIds.length > 0 ? [{ brand: { $in: brandIds } }] : []),
-      ],
-    })
-      .limit(16)
-      .populate({ path: "category", model: Category })
-      .populate({ path: "brand", model: Brand })
-      .lean();
+    // Call our unified search utility supporting Atlas Search and Regex fallback
+    const { products } = await searchProducts({
+      query,
+      categorySlug,
+      brandName,
+      minPrice,
+      maxPrice,
+      sortBy: sortBy as any,
+      limit,
+      skip,
+    });
 
     const normalized = products.map((p: any) => normalizeProduct(p));
 
@@ -78,4 +66,5 @@ export async function GET(request: Request) {
     );
   }
 }
+
 export const dynamic = "force-dynamic";

@@ -39,6 +39,7 @@ export interface IOrder extends Document {
     shipping: number;
     couponDiscount: number;
     pointsDiscount?: number;
+    walletAmountUsed: number; // New: wallet amount used
     // GST frozen at purchase time (India legal requirement — invoices must not recompute)
     taxRate?: number;
     taxableAmount?: number;
@@ -56,6 +57,7 @@ export interface IOrder extends Document {
     razorpayOrderId?: string;
     razorpayPaymentId?: string;
     status: "PENDING" | "PAID" | "FAILED" | "REFUND_PENDING" | "REFUNDED";
+    emiOption?: string; // New: EMI/Pay-Later details if applicable
   };
   status:
     | "PLACED"
@@ -70,6 +72,8 @@ export interface IOrder extends Document {
     | "RETURNED"
     | "REFUNDED";
   statusHistory: IOrderHistory[];
+  refundStatus?: "NONE" | "PENDING" | "PARTIAL" | "FULL" | "FAILED"; // New: refundStatus track
+  invoiceId?: mongoose.Types.ObjectId; // New: global or primary invoice reference
   refundDetails?: {
     preference?: "ORIGINAL" | "BANK" | "UPI";
     upiId?: string;
@@ -144,6 +148,7 @@ const OrderSchema: Schema = new Schema(
       shipping: { type: Number, required: true, default: 0 },
       couponDiscount: { type: Number, required: true, default: 0 },
       pointsDiscount: { type: Number, default: 0 },
+      walletAmountUsed: { type: Number, default: 0 }, // New: walletAmountUsed
       // GST frozen at purchase time (India legal requirement — invoices must not recompute)
       taxRate: { type: Number, default: 0 },
       taxableAmount: { type: Number, default: 0 },
@@ -170,6 +175,7 @@ const OrderSchema: Schema = new Schema(
         default: "PENDING",
         index: true,
       },
+      emiOption: { type: String }, // New: emiOption
     },
     status: {
       type: String,
@@ -190,6 +196,13 @@ const OrderSchema: Schema = new Schema(
       index: true,
     },
     statusHistory: [StatusHistorySchema],
+    refundStatus: {
+      type: String,
+      enum: ["NONE", "PENDING", "PARTIAL", "FULL", "FAILED"],
+      default: "NONE",
+      index: true
+    },
+    invoiceId: { type: Schema.Types.ObjectId, ref: "Invoice" }, // New: invoiceId
     refundDetails: {
       preference: { type: String, enum: ["ORIGINAL", "BANK", "UPI"], index: true },
       upiId: { type: String },

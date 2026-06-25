@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     }
 
     // Rate limit: 10 orders per user per minute
-    const limiter = rateLimit(`order:${session.user.id}`, { limit: 10, windowSeconds: 60 });
+    const limiter = await rateLimit(`order:${session.user.id}`, { limit: 10, windowSeconds: 60 });
     if (!limiter.allowed) {
       return NextResponse.json(
         { error: `Too many order attempts. Please try again in ${limiter.resetIn} seconds.` },

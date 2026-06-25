@@ -1,57 +1,90 @@
-/**
- * Simple in-memory sliding-window rate limiter.
- * Uses a Map keyed by IP (or identifier) with timestamped request counts.
- * Not suitable for multi-instance deployments — use Upstash or Redis for production at scale.
- */
+import { Ratelimit } from "@upstash/ratelimit";
+import redisClient from "./redis";
 
+// Check if redisClient is the real Upstash Redis client (has the config or class check)
+const isRedisConfigured =
+  !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
+
+// Local in-memory sliding window store for fallback
 interface RateLimitEntry {
   count: number;
   resetTime: number;
 }
-
-const store = new Map<string, RateLimitEntry>();
-
-// Cleanup stale entries every 5 minutes
+const localStore = new Map<string, RateLimitEntry>();
 const CLEANUP_INTERVAL = 5 * 60 * 1000;
 let lastCleanup = Date.now();
 
-function cleanup() {
+function localCleanup() {
   const now = Date.now();
   if (now - lastCleanup < CLEANUP_INTERVAL) return;
   lastCleanup = now;
-  for (const [key, entry] of store) {
+  for (const [key, entry] of localStore) {
     if (now > entry.resetTime) {
-      store.delete(key);
+      localStore.delete(key);
     }
   }
 }
 
 interface RateLimitOptions {
-  /** Maximum number of requests allowed in the window */
   limit: number;
-  /** Window duration in seconds */
   windowSeconds: number;
 }
 
 interface RateLimitResult {
   allowed: boolean;
   remaining: number;
-  resetIn: number; // seconds until window resets
+  resetIn: number; // in seconds
 }
 
-export function rateLimit(
-  identifier: string,
-  options: RateLimitOptions = { limit: 10, windowSeconds: 60 },
-): RateLimitResult {
-  cleanup();
+// Instantiate Upstash Ratelimit if configured
+let ratelimitInstance: Ratelimit | null = null;
+if (isRedisConfigured && (redisClient as any).url) {
+  ratelimitInstance = new Ratelimit({
+    redis: redisClient as any,
+    // default/fallback limiter, we can customize per call, but we'll instantiate a default one
+    limiter: Ratelimit.slidingWindow(10, "60 s"),
+    analytics: true,
+  });
+}
 
+/**
+ * Universal rate limit function. Uses Upstash Redis rate limiting if configured,
+ * otherwise falls back to local in-memory sliding window rate limiting.
+ */
+export async function rateLimit(
+  identifier: string,
+  options: RateLimitOptions = { limit: 10, windowSeconds: 60 }
+): Promise<RateLimitResult> {
+  const cacheKey = `ratelimit:${identifier}:${options.limit}:${options.windowSeconds}`;
+
+  if (isRedisConfigured && ratelimitInstance) {
+    try {
+      // Create a dynamic ratelimit instance tailored to these specific options if they differ from default
+      const customRatelimit = new Ratelimit({
+        redis: redisClient as any,
+        limiter: Ratelimit.slidingWindow(options.limit, `${options.windowSeconds} s`),
+        ephemeralCache: new Map(), // optimize performance by caching results in memory for a short time
+      });
+      
+      const result = await customRatelimit.limit(cacheKey);
+      return {
+        allowed: result.success,
+        remaining: result.remaining,
+        resetIn: Math.ceil((result.reset - Date.now()) / 1000),
+      };
+    } catch (err) {
+      console.error("Upstash Redis rate limit failed, falling back to local memory:", err);
+    }
+  }
+
+  // Local In-Memory Fallback
+  localCleanup();
   const now = Date.now();
   const windowMs = options.windowSeconds * 1000;
-  const entry = store.get(identifier);
+  const entry = localStore.get(cacheKey);
 
   if (!entry || now > entry.resetTime) {
-    // New window
-    store.set(identifier, { count: 1, resetTime: now + windowMs });
+    localStore.set(cacheKey, { count: 1, resetTime: now + windowMs });
     return { allowed: true, remaining: options.limit - 1, resetIn: options.windowSeconds };
   }
 
