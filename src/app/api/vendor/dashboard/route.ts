@@ -18,10 +18,14 @@ export async function GET() {
 
     // 1. Fetch vendor profile & wallet balance
     const vendorUser = await User.findById(vendorId).select("walletBalance").lean();
-    const profile = await VendorProfile.findOne({ vendorId }).select("rating").lean();
+    const profile = await VendorProfile.findOne({ userId: vendorId })
+      .select("rating kycStatus verificationStatus bankVerified gstinVerified panVerified")
+      .lean();
 
     const walletBalance = vendorUser?.walletBalance ?? 0;
-    const rating = profile?.rating ?? 4.5;
+    const rating = profile?.rating?.average ?? 4.5;
+    const kycStatus = profile?.kycStatus ?? "pending";
+    const verificationStatus = profile?.verificationStatus ?? "pending";
 
     // 2. Count products
     const productsCount = await Product.countDocuments({ vendorId });
@@ -30,19 +34,11 @@ export async function GET() {
     const ordersCount = await SubOrder.countDocuments({ vendorId });
 
     // 4. Sum revenue (delivered sub-orders)
-    const revenueAgg = await SubOrder.aggregate([
-      { $match: { vendorId: new Object(vendorId), status: "DELIVERED" } },
-      { $group: { _id: null, total: { $sum: "$pricing.vendorPayout" } } },
-    ]);
-    // Fallback if aggregation fails/returns empty because of Object mapping:
-    // Let's use find and sum in memory or dynamic casting, which is safer
     let revenue = 0;
-    if (revenueAgg && revenueAgg.length > 0) {
-      revenue = revenueAgg[0].total;
-    } else {
-      const deliveredSubOrders = await SubOrder.find({ vendorId, status: "DELIVERED" }).select("pricing.vendorPayout").lean();
-      revenue = deliveredSubOrders.reduce((sum, o) => sum + (o.pricing?.vendorPayout ?? 0), 0);
-    }
+    const deliveredSubOrders = await SubOrder.find({ vendorId, status: "DELIVERED" })
+      .select("pricing.vendorPayout")
+      .lean();
+    revenue = deliveredSubOrders.reduce((sum, o) => sum + (o.pricing?.vendorPayout ?? 0), 0);
 
     // 5. Fetch latest 5 sub-orders
     const rawSubOrders = await SubOrder.find({ vendorId })
@@ -76,6 +72,11 @@ export async function GET() {
       placedQueue,
       readyToShipQueue,
       inTransitQueue,
+      kycStatus,
+      verificationStatus,
+      bankVerified: profile?.bankVerified ?? false,
+      gstinVerified: profile?.gstinVerified ?? false,
+      panVerified: profile?.panVerified ?? false,
     });
   } catch (error: any) {
     console.error("Vendor dashboard API failed:", error);

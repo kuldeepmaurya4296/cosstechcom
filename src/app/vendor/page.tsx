@@ -75,10 +75,40 @@ export default function VendorPage() {
     placedQueue = 0,
     readyToShipQueue = 0,
     inTransitQueue = 0,
+    kycStatus = "pending",
   } = stats || {};
 
   return (
     <DashboardPage eyebrow="Seller Portal" title="Overview">
+      {/* KYC Alert Banner */}
+      {kycStatus !== "verified" && (
+        <div className={`p-4 rounded-xl mb-4 border flex items-center justify-between shadow-xs ${
+          kycStatus === "rejected" 
+            ? "bg-rose-500/10 border-rose-500/20 text-rose-700" 
+            : kycStatus === "submitted"
+            ? "bg-amber-500/10 border-amber-500/20 text-amber-700"
+            : "bg-blue-500/10 border-blue-500/20 text-blue-700"
+        }`}>
+          <div>
+            <span className="font-serif font-bold text-sm block">
+              {kycStatus === "rejected" ? "KYC Verification Failed" : kycStatus === "submitted" ? "KYC Verification Under Review" : "KYC Action Required"}
+            </span>
+            <span className="text-xs opacity-90 block mt-0.5">
+              {kycStatus === "rejected" 
+                ? "Your submitted business verification failed. Please review errors and upload documents." 
+                : kycStatus === "submitted"
+                ? "Your KYC documents are currently under review. This usually takes 24 hours."
+                : "Submit your GSTIN, PAN, and Bank details to activate listings and withdrawals."}
+            </span>
+          </div>
+          {kycStatus !== "submitted" && (
+            <Link href="/vendor/kyc" className="bg-charcoal text-cream hover:bg-cognac px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition shrink-0 ml-4">
+              Verify KYC
+            </Link>
+          )}
+        </div>
+      )}
+
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Earnings" value={formatINR(revenue)} icon={IndianRupee} tint="primary" />

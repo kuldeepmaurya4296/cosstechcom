@@ -17,6 +17,7 @@ import FlashSale from "@/lib/models/FlashSale";
 import SubOrder from "@/lib/models/SubOrder";
 import Category from "@/lib/models/Category";
 import { splitAmountProportionally, transitionSubOrderStatus } from "@/lib/order-utils";
+import { reserveInventory, releaseInventory, commitInventory } from "@/lib/inventory";
 
 export async function GET(request: Request) {
   try {
@@ -306,7 +307,24 @@ export async function POST(request: Request) {
       }
     }
 
-    const finalComputedTotal = Math.max(0, computedTotal - pointsDiscount);
+    const walletAmountUsed = pricing.walletAmountUsed || 0;
+
+    // Validate wallet balance if used
+    if (walletAmountUsed > 0) {
+      const User = (await import("@/lib/models/User")).default;
+      const user = await User.findById(userId).select("walletBalance").lean();
+      const userWalletBalance = user?.walletBalance || 0;
+      if (walletAmountUsed > userWalletBalance) {
+        return NextResponse.json(
+          {
+            error: `Insufficient wallet balance. Available: ₹${userWalletBalance}, attempted to use: ₹${walletAmountUsed}`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
+    const finalComputedTotal = Math.max(0, computedTotal - pointsDiscount - walletAmountUsed);
 
     // Final security check: validate total price matches
     if (pricing.total !== finalComputedTotal) {
@@ -326,40 +344,34 @@ export async function POST(request: Request) {
     );
     const orderId = `COSS-${String(counter.seq).padStart(5, "0")}`;
 
-    // Now decrement stock atomically
-    const decrementedItems = [];
+    // Now reserve stock using pessimistic holds
+    const reservedItems = [];
     try {
       for (const item of items) {
-        const updateResult = await Product.updateOne(
-          {
-            _id: item.productId,
-            variants: {
-              $elemMatch: { size: item.size, color: item.color, stock: { $gte: item.qty } },
-            },
-          },
-          {
-            $inc: { "variants.$.stock": -item.qty },
-          },
+        const reserveResult = await reserveInventory(
+          item.productId,
+          item.size,
+          item.color,
+          item.qty,
+          orderId, // Use orderId as holderId
+          15 // 15 minutes hold window
         );
-        if (updateResult.modifiedCount === 0) {
+        if (!reserveResult.success) {
           throw new Error(
-            `Insufficient stock for variant (Size: ${item.size}, Color: ${item.color}) of ${item.name}.`,
+            reserveResult.error || `Insufficient stock for variant (Size: ${item.size}, Color: ${item.color}) of ${item.name}.`
           );
         }
-        decrementedItems.push(item);
+        reservedItems.push(item);
       }
     } catch (err: any) {
-      // Rollback stock decrement for completed items
-      for (const rolledBack of decrementedItems) {
-        await Product.updateOne(
-          {
-            _id: rolledBack.productId,
-            "variants.size": rolledBack.size,
-            "variants.color": rolledBack.color,
-          },
-          {
-            $inc: { "variants.$.stock": rolledBack.qty },
-          },
+      // Rollback reservations for completed items
+      for (const rolledBack of reservedItems) {
+        await releaseInventory(
+          rolledBack.productId,
+          rolledBack.size,
+          rolledBack.color,
+          rolledBack.qty,
+          orderId
         );
       }
       return NextResponse.json(
@@ -478,6 +490,7 @@ export async function POST(request: Request) {
           shipping: computedShippingCost,
           couponDiscount: computedCouponDiscount,
           pointsDiscount: pointsDiscount,
+          walletAmountUsed: walletAmountUsed,
           taxRate: general.taxRate,
           taxableAmount: taxableAmount,
           cgst: Math.round((computedTax / 2) * 100) / 100,
@@ -503,18 +516,28 @@ export async function POST(request: Request) {
     } catch (orderErr: any) {
       await SubOrder.deleteMany({ parentOrderId: mainOrderObjectId });
       for (const rolledBack of items) {
-        await Product.updateOne(
-          {
-            _id: rolledBack.productId,
-            "variants.size": rolledBack.size,
-            "variants.color": rolledBack.color,
-          },
-          {
-            $inc: { "variants.$.stock": rolledBack.qty },
-          },
+        await releaseInventory(
+          rolledBack.productId,
+          rolledBack.size,
+          rolledBack.color,
+          rolledBack.qty,
+          orderId
         );
       }
       throw orderErr;
+    }
+
+    // Commit holds immediately if COD (instantly placed & confirmed)
+    if (order.payment.method === "COD") {
+      for (const item of items) {
+        await commitInventory(item.productId, item.size, item.color, orderId);
+      }
+    }
+
+    // Debit wallet if wallet was used
+    if (walletAmountUsed > 0) {
+      const { debitUserWallet } = await import("@/lib/wallet");
+      await debitUserWallet(userId, walletAmountUsed, `Purchase of Order #${order.orderId}`, "order", order._id.toString());
     }
 
     // Increment coupon usage count after successful order creation
@@ -790,6 +813,19 @@ export async function PUT(request: Request) {
         // If prepaid order and payment status is PENDING, mark it as FAILED
         if (order.payment.method !== "COD" && order.payment.status === "PENDING") {
           order.payment.status = "FAILED";
+        }
+
+        // Refund wallet amount if used
+        if (order.pricing && order.pricing.walletAmountUsed > 0) {
+          const { creditUserWallet } = await import("@/lib/wallet");
+          await creditUserWallet(
+            order.userId,
+            order.pricing.walletAmountUsed,
+            `Refund for cancelled Order #${order.orderId}`,
+            "refund",
+            order._id.toString(),
+            sessionOptions
+          );
         }
 
         // If prepaid order, process refund preference

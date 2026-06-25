@@ -229,27 +229,49 @@ export default function ProductClient({
 
   const [pincode, setPincode] = useState("");
   const [deliveryStatus, setDeliveryStatus] = useState<{ checked: boolean; success: boolean; msg: string } | null>(null);
+  const [checkingPincode, setCheckingPincode] = useState(false);
   const [qas, setQas] = useState([
     { q: "Is the product eligible for return or exchange?", a: "Yes! All products are eligible for exchange or return within 7 days of delivery if in original unused condition." },
     { q: "Are the colors shown exactly the same as physical product?", a: "We take product photos under studio lighting. There might be a slight variance in shade but they are 95%+ identical." },
   ]);
   const [newQuestion, setNewQuestion] = useState("");
 
-  const handleCheckPincode = (e: React.FormEvent) => {
+  const handleCheckPincode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (/^\d{6}$/.test(pincode.trim())) {
-      const days = product.estimatedDeliveryDays || 5;
-      setDeliveryStatus({
-        checked: true,
-        success: true,
-        msg: `Delivery available. Est. delivery within ${days} days! COD eligible.`,
-      });
-    } else {
+    if (!/^\d{6}$/.test(pincode.trim())) {
       setDeliveryStatus({
         checked: true,
         success: false,
         msg: "Please enter a valid 6-digit PIN code (e.g. 273001).",
       });
+      return;
+    }
+
+    setCheckingPincode(true);
+    try {
+      const res = await fetch(`/api/shipping/serviceability?productId=${product.id}&deliveryPincode=${pincode.trim()}`);
+      const data = await res.json();
+      if (res.ok && data.serviceable) {
+        setDeliveryStatus({
+          checked: true,
+          success: true,
+          msg: `Delivery available via ${data.carrier || "Courier"}. Estimated delivery in ${data.estimatedDays || 5} days!`,
+        });
+      } else {
+        setDeliveryStatus({
+          checked: true,
+          success: false,
+          msg: data.error || "Delivery not serviceable to this pincode.",
+        });
+      }
+    } catch (err) {
+      setDeliveryStatus({
+        checked: true,
+        success: false,
+        msg: "Failed to check serviceability. Please try again.",
+      });
+    } finally {
+      setCheckingPincode(false);
     }
   };
 
@@ -452,9 +474,10 @@ export default function ProductClient({
               />
               <button
                 type="submit"
-                className="bg-charcoal text-cream hover:bg-cognac px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                disabled={checkingPincode}
+                className="bg-charcoal text-cream hover:bg-cognac px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50"
               >
-                Check
+                {checkingPincode ? "Checking..." : "Check"}
               </button>
             </form>
             {deliveryStatus && (

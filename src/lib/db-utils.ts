@@ -191,17 +191,27 @@ export async function cleanupExpiredPendingOrders() {
       console.log(`[Passive Cleanup] Auto-cancelling expired order ${order.orderId}`);
 
       // Rollback stock atomically
+      const { releaseInventory } = await import("./inventory");
       for (const item of order.items) {
-        await Product.updateOne(
-          {
-            _id: item.productId,
-            "variants.size": item.size,
-            "variants.color": item.color,
-          },
-          {
-            $inc: { "variants.$.stock": item.qty },
-          },
+        const released = await releaseInventory(
+          item.productId,
+          item.size,
+          item.color,
+          item.qty,
+          order.orderId
         );
+        if (!released) {
+          await Product.updateOne(
+            {
+              _id: item.productId,
+              "variants.size": item.size,
+              "variants.color": item.color,
+            },
+            {
+              $inc: { "variants.$.stock": item.qty },
+            },
+          );
+        }
       }
 
       order.status = "CANCELLED";

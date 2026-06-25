@@ -6,6 +6,7 @@ import LoyaltyPoints from "@/lib/models/LoyaltyPoints";
 import Payout from "@/lib/models/Payout";
 import Counter from "@/lib/models/Counter";
 import Order from "@/lib/models/Order";
+import { releaseInventory } from "@/lib/inventory";
 
 /**
  * Splits an amount proportionally based on subtotals.
@@ -65,18 +66,27 @@ export async function transitionSubOrderStatus(
     (nextStatus === "RETURNED" && currentStatus !== "RETURNED")
   ) {
     for (const item of subOrder.items) {
-      await Product.updateOne(
-        {
-          _id: item.productId,
-          variants: {
-            $elemMatch: { size: item.size, color: item.color },
-          },
-        },
-        {
-          $inc: { "variants.$.stock": item.qty },
-        },
-        sessionOptions
+      const released = await releaseInventory(
+        item.productId,
+        item.size,
+        item.color,
+        item.qty,
+        subOrder.parentOrderSeqId
       );
+      if (!released) {
+        await Product.updateOne(
+          {
+            _id: item.productId,
+            variants: {
+              $elemMatch: { size: item.size, color: item.color },
+            },
+          },
+          {
+            $inc: { "variants.$.stock": item.qty },
+          },
+          sessionOptions
+        );
+      }
     }
   }
 

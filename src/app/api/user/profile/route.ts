@@ -35,6 +35,7 @@ export async function GET() {
         name: user.name,
         email: user.email,
         phone: user.phone || "",
+        walletBalance: user.walletBalance || 0,
         createdAt: user.createdAt,
       },
       stats: {

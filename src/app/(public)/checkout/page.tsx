@@ -183,13 +183,29 @@ export default function CheckoutPage() {
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [redeemPoints, setRedeemPoints] = useState(false);
 
+  // Wallet States
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [useWallet, setUseWallet] = useState(false);
+
   useEffect(() => {
     if (!session?.user?.id) return;
+    
+    // Fetch Loyalty
     fetch("/api/user/loyalty")
       .then((res) => res.json())
       .then((data) => {
         if (data && typeof data.balance === "number") {
           setLoyaltyPoints(data.balance);
+        }
+      })
+      .catch(console.error);
+
+    // Fetch Wallet balance from Profile
+    fetch("/api/user/profile")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success && data.user && typeof data.user.walletBalance === "number") {
+          setWalletBalance(data.user.walletBalance);
         }
       })
       .catch(console.error);
@@ -241,7 +257,9 @@ export default function CheckoutPage() {
   const tax = Math.round(taxableAmount * (settings.taxRate / 100));
   const totalBeforePoints = Math.max(0, taxableAmount + shippingCost + tax);
   const pointsDiscount = redeemPoints ? Math.min(loyaltyPoints, totalBeforePoints) : 0;
-  const total = Math.max(0, totalBeforePoints - pointsDiscount);
+  const totalAfterPoints = Math.max(0, totalBeforePoints - pointsDiscount);
+  const walletDiscount = useWallet ? Math.min(walletBalance, totalAfterPoints) : 0;
+  const total = Math.max(0, totalAfterPoints - walletDiscount);
 
   const handleShippingChange = (name: string, price: number) => {
     setShippingMethod(name);
@@ -288,6 +306,7 @@ export default function CheckoutPage() {
             shipping: shippingCost,
             couponDiscount,
             pointsDiscount,
+            walletAmountUsed: walletDiscount,
             total,
           },
           coupon: couponApplied
@@ -702,6 +721,38 @@ export default function CheckoutPage() {
                         <span className="text-xs text-muted-foreground block mt-0.5">
                           Applies a discount of{" "}
                           {formatINR(Math.min(loyaltyPoints, totalBeforePoints))}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                )}
+
+                {/* Wallet Balance Section */}
+                {session && walletBalance > 0 && (
+                  <div className="border-t border-border/40 pt-6 mt-6">
+                    <h3 className="font-serif text-lg font-bold text-charcoal mb-2 flex items-center gap-2">
+                      <Landmark className="h-4.5 w-4.5 text-cognac" />
+                      Use Wallet Balance
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      You have{" "}
+                      <span className="font-bold text-charcoal">{formatINR(walletBalance)}</span>{" "}
+                      available in your wallet.
+                    </p>
+                    <label className="flex items-center gap-3 border border-dashed rounded-2xl p-4.5 cursor-pointer bg-emerald-50/15 border-emerald-300/40 hover:bg-emerald-50/20 transition-all duration-300">
+                      <input
+                        type="checkbox"
+                        checked={useWallet}
+                        onChange={(e) => setUseWallet(e.target.checked)}
+                        className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-border cursor-pointer accent-emerald-600"
+                      />
+                      <div>
+                        <span className="font-serif font-bold text-sm text-charcoal">
+                          Deduct from wallet balance
+                        </span>
+                        <span className="text-xs text-muted-foreground block mt-0.5">
+                          Applies a deduction of{" "}
+                          {formatINR(Math.min(walletBalance, totalAfterPoints))}
                         </span>
                       </div>
                     </label>

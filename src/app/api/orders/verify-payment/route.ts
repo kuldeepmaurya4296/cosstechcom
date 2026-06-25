@@ -3,6 +3,7 @@ import crypto from "crypto";
 import Order from "@/lib/models/Order";
 import Product from "@/lib/models/Product";
 import { ensureDbReady } from "@/lib/db-utils";
+import { commitInventory } from "@/lib/inventory";
 
 export async function POST(request: Request) {
   try {
@@ -100,6 +101,11 @@ export async function POST(request: Request) {
     });
 
     await order.save();
+
+    // Commit inventory holds
+    for (const item of order.items) {
+      await commitInventory(item.productId, item.size, item.color, orderId);
+    }
 
     // Send order confirmation email asynchronously
     try {
