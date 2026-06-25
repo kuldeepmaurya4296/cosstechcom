@@ -175,7 +175,7 @@ export function Hero({ initialBanners }: { initialBanners?: any[] }) {
                   <span className="inline-block text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-cognac font-extrabold border border-brass/35 rounded-full px-3 py-1 bg-cream/80 backdrop-blur-xs shadow-2xs">
                     {active.tagline}
                   </span>
-                  <span>Test Version 2</span>
+                  <span>Test Version 2 via github</span>
                   <h1 className="font-serif text-[32px] leading-[1.1] md:text-6xl md:leading-[0.98] font-bold text-charcoal text-balance">
                     {active.title}
                   </h1>
