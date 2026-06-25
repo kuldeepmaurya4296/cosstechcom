@@ -945,7 +945,7 @@ function NewsletterTab({ subscribers }: { subscribers: any[] }) {
               <textarea
                 required
                 rows={10}
-                placeholder="<p>Dear Artisan Footwear Lover,</p> <p>We are thrilled to announce...</p>"
+                placeholder="<p>Dear Valued Customer,</p> <p>We are thrilled to announce...</p>"
                 value={htmlContent}
                 onChange={(e) => setHtmlContent(e.target.value)}
                 className="w-full p-2.5 border border-border rounded bg-background text-sm font-mono"

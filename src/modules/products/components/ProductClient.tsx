@@ -334,7 +334,7 @@ export default function ProductClient({
                 </span>
               )}
               {product.flashSale ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-600 text-xs font-bold rounded-full border border-red-500/20">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/10 text-red-600 text-xs font-bold rounded-full border border-red-500/20 whitespace-nowrap">
                   ⚡ FLASH DEAL (
                   {product.flashSale.discountType === "PERCENTAGE"
                     ? `${product.flashSale.discountValue}%`
@@ -343,7 +343,7 @@ export default function ProductClient({
                 </span>
               ) : (
                 discountPercent && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 text-xs font-bold rounded-full border border-emerald-500/20">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 text-xs font-bold rounded-full border border-emerald-500/20 whitespace-nowrap">
                     <Sparkles className="h-3 w-3" />
                     {discountPercent}% OFF
                   </span>

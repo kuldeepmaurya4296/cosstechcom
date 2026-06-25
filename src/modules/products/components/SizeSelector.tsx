@@ -48,7 +48,7 @@ export function SizeSelector({
           </button>
         )}
       </div>
-      <div className="grid grid-cols-6 gap-2">
+      <div className="flex flex-wrap gap-2">
         {sizes.map((s) => {
           const isAvailable = availableSizes.length === 0 || availableSizes.includes(s);
           const isSelected = selectedSize === s;
@@ -58,7 +58,7 @@ export function SizeSelector({
               type="button"
               disabled={!isAvailable}
               onClick={() => isAvailable && onSelect(s)}
-              className={`h-12 rounded-lg border-2 text-sm font-semibold transition relative cursor-pointer disabled:cursor-not-allowed ${
+              className={`h-12 px-4 min-w-[3rem] rounded-lg border-2 text-sm font-semibold transition relative cursor-pointer disabled:cursor-not-allowed ${
                 isSelected
                   ? "border-primary bg-primary text-primary-foreground"
                   : isAvailable

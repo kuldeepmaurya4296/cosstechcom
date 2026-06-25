@@ -321,17 +321,17 @@ export default function ShopClient({
             The Collection
           </p>
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-charcoal">
-            Footwear Catalog
+            Marketplace Catalog
           </h1>
           <p className="text-muted-foreground text-sm mt-3 max-w-2xl leading-relaxed">
-            Step into comfort and style with our premium range of multi-vendor footwear. Compare
-            prices and designs from verified sellers across India.
+            Explore premium products from verified multi-vendor brands across India. Compare
+            prices, designs, and specifications in our open marketplace.
           </p>
         </div>
         <div className="flex items-center gap-4 bg-muted/20 py-2.5 px-5 rounded-2xl border border-border/40 w-fit shrink-0 self-start md:self-center">
           <div className="text-right">
             <span className="block text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-              Total Styles
+              Total Products
             </span>
             <span className="text-xl font-serif font-extrabold text-charcoal">{totalProducts}</span>
           </div>

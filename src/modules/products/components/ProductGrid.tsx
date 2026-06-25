@@ -26,10 +26,10 @@ export function ProductGrid({
           <SlidersHorizontal className="h-8 w-8" />
         </div>
         <h3 className="font-serif text-xl font-bold text-charcoal mb-2">
-          No Matching Styles Found
+          No Matching Products Found
         </h3>
         <p className="text-sm text-muted-foreground max-w-sm mb-6">
-          We couldn't find any footwear in our current catalog matching your filters. Try clearing
+          We couldn't find any products in our current catalog matching your filters. Try clearing
           some filters or searching for something else.
         </p>
         <button
@@ -53,7 +53,7 @@ export function ProductGrid({
       {products.length < totalProducts && (
         <div className="mt-16 flex flex-col items-center gap-3">
           <p className="text-xs text-muted-foreground font-semibold">
-            Showing {products.length} of {totalProducts} footwear styles
+            Showing {products.length} of {totalProducts} products
           </p>
           <div className="w-48 h-1 bg-border/40 rounded-full overflow-hidden mb-2.5">
             <div

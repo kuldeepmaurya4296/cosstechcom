@@ -236,7 +236,7 @@ export default function AccountOrdersPage() {
           </div>
           <p className="font-serif text-lg font-bold text-foreground">No orders found</p>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            You haven't placed any orders yet. Discover our premium footwear collections and place
+            You haven't placed any orders yet. Discover our premium collections and place
             your first order.
           </p>
           <Link

@@ -17,13 +17,13 @@ export default function NotFound() {
         {/* Brand/Heading Info */}
         <div className="space-y-2">
           <p className="text-xs font-semibold tracking-[0.25em] text-cognac uppercase">
-            Error 404 — Lost Style
+            Error 404 — Lost Page
           </p>
           <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Page Not Found
           </h1>
           <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
-            The footwear style or destination you are seeking has wandered off the path or has been
+            The product page or destination you are seeking has wandered off the path or has been
             retired from our catalog.
           </p>
         </div>

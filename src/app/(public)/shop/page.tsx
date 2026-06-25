@@ -315,11 +315,11 @@ async function getShopData(filters: any) {
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const { category, search } = await searchParams;
-  let title = "Footwear Catalog — CosstechCom";
-  let description = "Browse our exclusive footwear collections from verified vendors.";
+  let title = "Marketplace Catalog — CosstechCom";
+  let description = "Browse our exclusive collections from verified multi-vendor brands.";
 
   if (category && category !== "all") {
-    title = `${category.charAt(0).toUpperCase() + category.slice(1)} Footwear — CosstechCom`;
+    title = `${category.charAt(0).toUpperCase() + category.slice(1)} — CosstechCom`;
   }
   if (search) {
     title = `Search results for "${search}" — CosstechCom`;

@@ -133,7 +133,7 @@ export default function AccountWishlistPage() {
             </div>
             <p className="font-serif text-lg font-bold text-foreground">Your Wishlist is Empty</p>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-              Save your favorite sneakers, formals, and bridal footwear here to keep track of their
+              Save your favorite items, electronics, and fashion apparel here to keep track of their
               stock and prices.
             </p>
             <Link
