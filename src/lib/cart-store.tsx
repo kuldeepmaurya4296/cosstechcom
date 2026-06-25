@@ -28,8 +28,8 @@ interface CartCtx {
 }
 
 const Ctx = createContext<CartCtx | null>(null);
-const KEY = "rbh-cart-v1";
-const WKEY = "rbh-wish-v1";
+const KEY = "coss-cart-v1";
+const WKEY = "coss-wish-v1";
 const lineKey = (l: { productId: string; size: number; color: string }) =>
   `${l.productId}-${l.size}-${l.color}`;
 

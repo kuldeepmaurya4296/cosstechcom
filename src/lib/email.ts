@@ -4,7 +4,7 @@ const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || "465", 10);
 const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || SMTP_USER || "care@rajaboothouse.com";
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || SMTP_USER || "care@cosstechcom.com";
 
 // Setup transporter
 function getTransporter() {
@@ -32,23 +32,23 @@ export async function sendWelcomeEmail(toEmail: string, name: string) {
   if (!transporter) return false;
 
   const mailOptions = {
-    from: `"Raja Boot House" <${SUPPORT_EMAIL}>`,
+    from: `"CosstechCom" <${SUPPORT_EMAIL}>`,
     to: toEmail,
-    subject: "Welcome to Raja Footwear Club — Raja Boot House",
+    subject: "Welcome to CosstechCom Club — CosstechCom",
     html: `
       <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #E4E4E7; background-color: #FAF9F6; color: #1C1917;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">Raja Boot House</h2>
-          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Footwear & Premium Brands</p>
+          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">CosstechCom</h2>
+          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin-bottom: 35px;" />
         
         <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Dear ${name},</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Thank you for subscribing to <strong>The Raja Footwear Club</strong>.</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">We are delighted to welcome you. We look forward to sharing our latest footwear collections, updates on local craftsmanship, and exclusive festive discount alerts directly from Gorakhpur's premium footwear house.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Thank you for subscribing to <strong>The CosstechCom Club</strong>.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">We are delighted to welcome you. We look forward to sharing our latest product updates, trending collections, and exclusive member discount alerts directly from CosstechCom.</p>
         
         <div style="margin: 40px 0; text-align: center;">
-          <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/shop" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
+          <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/shop" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
             Explore The Catalog
           </a>
         </div>
@@ -57,8 +57,8 @@ export async function sendWelcomeEmail(toEmail: string, name: string) {
         
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin: 35px 0 20px 0;" />
         <div style="text-align: center; font-size: 11px; color: #71717A;">
-          <p style="margin: 0 0 5px 0;">Raja Boot House, Main Footwear Market, Gorakhpur, UP, India</p>
-          <p style="margin: 0;">You received this email because you subscribed to our newsletter on our website. <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/api/newsletter/unsubscribe?email=${encodeURIComponent(toEmail)}" style="color: #8C6D58; text-decoration: underline;">Unsubscribe</a></p>
+          <p style="margin: 0 0 5px 0;">CosstechCom Headquarters, Tech Park, Jaipur, Rajasthan, India</p>
+          <p style="margin: 0;">You received this email because you subscribed to our newsletter on our website. <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/api/newsletter/unsubscribe?email=${encodeURIComponent(toEmail)}" style="color: #8C6D58; text-decoration: underline;">Unsubscribe</a></p>
         </div>
       </div>
     `,
@@ -82,14 +82,14 @@ export async function sendNewsletterEmail(toEmail: string, subject: string, html
   if (!transporter) return false;
 
   const mailOptions = {
-    from: `"Raja Boot House" <${SUPPORT_EMAIL}>`,
+    from: `"CosstechCom" <${SUPPORT_EMAIL}>`,
     to: toEmail,
     subject: subject,
     html: `
       <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #E4E4E7; background-color: #FAF9F6; color: #1C1917;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">Raja Boot House</h2>
-          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Artisan Craftsmanship & Premium Brands</p>
+          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">CosstechCom</h2>
+          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin-bottom: 35px;" />
         
@@ -99,8 +99,8 @@ export async function sendNewsletterEmail(toEmail: string, subject: string, html
         
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin: 35px 0 20px 0;" />
         <div style="text-align: center; font-size: 11px; color: #71717A;">
-          <p style="margin: 0 0 5px 0;">Raja Boot House, Main Footwear Market, Gorakhpur, UP, India</p>
-          <p style="margin: 0;">If you wish to unsubscribe, please <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/api/newsletter/unsubscribe?email=${encodeURIComponent(toEmail)}" style="color: #8C6D58; text-decoration: underline;">click here</a>.</p>
+          <p style="margin: 0 0 5px 0;">CosstechCom Headquarters, Tech Park, Jaipur, Rajasthan, India</p>
+          <p style="margin: 0;">If you wish to unsubscribe, please <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/api/newsletter/unsubscribe?email=${encodeURIComponent(toEmail)}" style="color: #8C6D58; text-decoration: underline;">click here</a>.</p>
         </div>
       </div>
     `,
@@ -130,7 +130,7 @@ export async function sendOrderConfirmationEmail(toEmail: string, order: any) {
     <tr>
       <td style="padding: 10px 0; border-bottom: 1px solid #E4E4E7;">
         <p style="font-size: 14px; font-weight: bold; margin: 0; color: #1C1917;">${item.name}</p>
-        <p style="font-size: 12px; color: #71717A; margin: 3px 0 0 0;">Size: UK ${item.size} · Color: ${item.color} · Qty: ${item.qty}</p>
+        <p style="font-size: 12px; color: #71717A; margin: 3px 0 0 0;">Size: ${item.size} · Color: ${item.color} · Qty: ${item.qty}</p>
       </td>
       <td style="padding: 10px 0; border-bottom: 1px solid #E4E4E7; text-align: right; font-size: 14px; font-weight: bold; color: #1C1917;">
         ₹${item.price * item.qty}
@@ -141,19 +141,19 @@ export async function sendOrderConfirmationEmail(toEmail: string, order: any) {
     .join("");
 
   const mailOptions = {
-    from: `"Raja Boot House" <${SUPPORT_EMAIL}>`,
+    from: `"CosstechCom" <${SUPPORT_EMAIL}>`,
     to: toEmail,
-    subject: `Order Confirmed — ${orderId} — Raja Boot House`,
+    subject: `Order Confirmed — ${orderId} — CosstechCom`,
     html: `
       <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #E4E4E7; background-color: #FAF9F6; color: #1C1917;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">Raja Boot House</h2>
-          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Quality & Timeless Footwear</p>
+          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">CosstechCom</h2>
+          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin-bottom: 25px;" />
         
         <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Dear Customer,</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Thank you for your order! We are preparing your hand-finished pair. Your order <strong>${orderId}</strong> has been received and is currently being processed.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Thank you for your order! Your order <strong>${orderId}</strong> has been received and is currently being processed.</p>
         
         <h3 style="font-size: 16px; margin: 30px 0 10px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #1C1917; padding-bottom: 5px; color: #1C1917;">Order Summary</h3>
         <table style="width: 100%; border-collapse: collapse;">
@@ -215,7 +215,7 @@ export async function sendOrderConfirmationEmail(toEmail: string, order: any) {
         </div>
 
         <div style="text-align: center; margin: 35px 0;">
-          <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/account/orders" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
+          <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/account/orders" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
             Track Your Order
           </a>
         </div>
@@ -224,7 +224,7 @@ export async function sendOrderConfirmationEmail(toEmail: string, order: any) {
         
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin: 30px 0 20px 0;" />
         <div style="text-align: center; font-size: 11px; color: #71717A;">
-          <p style="margin: 0 0 5px 0;">Raja Boot House, Main Footwear Market, Gorakhpur, UP, India</p>
+          <p style="margin: 0 0 5px 0;">CosstechCom Headquarters, Tech Park, Jaipur, Rajasthan, India</p>
           <p style="margin: 0;">This email is sent automatically to confirm your purchase.</p>
         </div>
       </div>
@@ -256,7 +256,7 @@ export async function sendOrderStatusEmail(
   const { orderId, shippingAddress } = order;
 
   const statusLabels: Record<string, string> = {
-    CONFIRMED: "Confirmed & In Production",
+    CONFIRMED: "Confirmed & Processing",
     PACKED: "Packed & Ready to Dispatch",
     SHIPPED: "Shipped & Out for Transit",
     DELIVERED: "Successfully Delivered",
@@ -268,14 +268,14 @@ export async function sendOrderStatusEmail(
   const statusHeadline = statusLabels[newStatus] || newStatus;
 
   const mailOptions = {
-    from: `"Raja Boot House" <${SUPPORT_EMAIL}>`,
+    from: `"CosstechCom" <${SUPPORT_EMAIL}>`,
     to: toEmail,
     subject: `Order Status Update: ${statusHeadline} — ${orderId}`,
     html: `
       <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #E4E4E7; background-color: #FAF9F6; color: #1C1917;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">Raja Boot House</h2>
-          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Artisan Craftsmanship & Premium Brands</p>
+          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">CosstechCom</h2>
+          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin-bottom: 25px;" />
         
@@ -290,7 +290,7 @@ export async function sendOrderStatusEmail(
         <p style="font-size: 14px; line-height: 1.5; color: #27272A;">You can view detailed shipment logs or manage your order anytime in your account panel.</p>
 
         <div style="text-align: center; margin: 35px 0;">
-          <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/account/orders" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
+          <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/account/orders" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
             Track Your Order
           </a>
         </div>
@@ -299,7 +299,7 @@ export async function sendOrderStatusEmail(
         
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin: 30px 0 20px 0;" />
         <div style="text-align: center; font-size: 11px; color: #71717A;">
-          <p style="margin: 0 0 5px 0;">Raja Boot House, Main Footwear Market, Gorakhpur, UP, India</p>
+          <p style="margin: 0 0 5px 0;">CosstechCom Headquarters, Tech Park, Jaipur, Rajasthan, India</p>
         </div>
       </div>
     `,
@@ -330,7 +330,7 @@ export async function sendAbandonedCartEmail(toEmail: string, name: string, item
         <div style="flex: 1; text-align: left;">
           <h4 style="margin: 0; font-size: 14px; color: #1C1917;">${item.name}</h4>
           <p style="margin: 3px 0 0 0; font-size: 11px; color: #71717A;">
-            Size: UK ${item.size} &middot; Color: ${item.color} &middot; Qty: ${item.quantity}
+            Size: ${item.size} &middot; Color: ${item.color} &middot; Qty: ${item.quantity}
           </p>
         </div>
         <div style="margin-left: auto; font-weight: bold; font-size: 14px; color: #8C6D58; min-width: 80px; text-align: right;">
@@ -342,19 +342,19 @@ export async function sendAbandonedCartEmail(toEmail: string, name: string, item
     .join("");
 
   const mailOptions = {
-    from: `"Raja Boot House" <${SUPPORT_EMAIL}>`,
+    from: `"CosstechCom" <${SUPPORT_EMAIL}>`,
     to: toEmail,
-    subject: "Still thinking about these shoes? — Raja Boot House",
+    subject: "Still thinking about these items? — CosstechCom",
     html: `
       <div style="font-family: 'Georgia', 'Times New Roman', serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #E4E4E7; background-color: #FAF9F6; color: #1C1917;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">Raja Boot House</h2>
-          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Artisan Craftsmanship & Premium Brands</p>
+          <h2 style="font-size: 28px; margin: 0; color: #1C1917; letter-spacing: 0.05em; text-transform: uppercase;">CosstechCom</h2>
+          <p style="font-size: 10px; text-transform: uppercase; tracking-spacing: 0.2em; color: #8C6D58; margin-top: 5px; font-weight: bold;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin-bottom: 25px;" />
         
         <p style="font-size: 15px; line-height: 1.6; color: #27272A;">Dear ${name || "Customer"},</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">We noticed you left some beautiful footwear items in your shopping bag. They are still reserved for you, but popular styles sell out quickly!</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #27272A;">We noticed you left some beautiful items in your shopping bag. They are still reserved for you, but popular items sell out quickly!</p>
         
         <div style="margin: 25px 0; padding: 20px; background-color: #FFFFFF; border-radius: 12px; border: 1px solid #E4E4E7;">
           <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; color: #8C6D58; text-align: left;">Your Shopping Bag</h3>
@@ -362,7 +362,7 @@ export async function sendAbandonedCartEmail(toEmail: string, name: string, item
         </div>
 
         <div style="text-align: center; margin: 35px 0;">
-          <a href="${process.env.NEXTAUTH_URL || "https://rajaboothouse.com"}/checkout" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
+          <a href="${process.env.NEXTAUTH_URL || "https://cosstechcom.com"}/checkout" style="background-color: #1C1917; color: #FAF9F6; text-decoration: none; padding: 12px 28px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block;">
             Complete Your Checkout
           </a>
         </div>
@@ -371,7 +371,7 @@ export async function sendAbandonedCartEmail(toEmail: string, name: string, item
         
         <hr style="border: 0; border-top: 1px solid #E4E4E7; margin: 30px 0 20px 0;" />
         <div style="text-align: center; font-size: 11px; color: #71717A;">
-          <p style="margin: 0 0 5px 0;">Raja Boot House, Main Footwear Market, Gorakhpur, UP, India</p>
+          <p style="margin: 0 0 5px 0;">CosstechCom Headquarters, Tech Park, Jaipur, Rajasthan, India</p>
         </div>
       </div>
     `,

@@ -309,7 +309,7 @@ export default function CheckoutPage() {
       }
 
       const localOrder = orderData.order;
-      const orderId = localOrder?.orderId || `RBH-${Date.now()}`;
+      const orderId = localOrder?.orderId || `COSS-${Date.now()}`;
 
       // 2. Handle payment based on paymentMethod
       if (paymentMethod === "COD") {
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
           key: razorpayKey,
           amount: rzpOrderData.amount,
           currency: rzpOrderData.currency || "INR",
-          name: "Raja Boot House",
+          name: "CosstechCom",
           description: "Order Checkout Payment",
           order_id: rzpOrderData.id,
           handler: async function (response: any) {
@@ -649,7 +649,7 @@ export default function CheckoutPage() {
                   <div className="flex gap-2 max-w-sm">
                     <input
                       type="text"
-                      placeholder="Enter coupon code (e.g. RAJA10)"
+                      placeholder="Enter coupon code (e.g. COSS10)"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       disabled={couponApplied}

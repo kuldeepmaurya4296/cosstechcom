@@ -41,8 +41,8 @@ export async function GET(request: Request) {
           <!-- Header -->
           <div class="header">
             <div class="store-info">
-              <h2 class="store-name">RAJA BOOT HOUSE</h2>
-              <p class="store-sub">Gorakhpur's Premium Footwear Portal</p>
+              <h2 class="store-name">COSSTECHCOM</h2>
+              <p class="store-sub">Ultimate Multi-Vendor E-Commerce Portal</p>
             </div>
             <div class="qr-container">
               <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${order.orderId}" alt="Order QR" class="qr-code" />
@@ -122,7 +122,7 @@ export async function GET(request: Request) {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Shipping Labels — Raja Boot House</title>
+          <title>Shipping Labels — CosstechCom</title>
           <style>
             body {
               margin: 0;

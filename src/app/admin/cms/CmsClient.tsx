@@ -904,7 +904,7 @@ function NewsletterTab({ subscribers }: { subscribers: any[] }) {
             Club Members & Inquiries ({subscribers.length})
           </h3>
           <p className="text-xs text-muted-foreground">
-            A list of all users registered to Raja Footwear Club.
+            A list of all users registered to CosstechCom Club.
           </p>
         </div>
         <DataTable columns={cols} rows={subscribers} empty="No subscribers registered yet." />
@@ -985,12 +985,12 @@ function NewsletterTab({ subscribers }: { subscribers: any[] }) {
 function SettingsTab({ settings }: { settings: any[] }) {
   const getVal = (key: string) => settings.find((s) => s.key === key)?.value || "";
 
-  const [storeName, setStoreName] = useState(getVal("storeName") || "Raja Boot House");
+  const [storeName, setStoreName] = useState(getVal("storeName") || "CosstechCom");
   const [contactEmail, setContactEmail] = useState(
-    getVal("contactEmail") || "support@rajaboothouse.com",
+    getVal("contactEmail") || "support@cosstechcom.com",
   );
   const [aboutUs, setAboutUs] = useState(
-    getVal("aboutUs") || "Welcome to Raja Boot House. We sell shoes.",
+    getVal("aboutUs") || "Welcome to CosstechCom marketplace.",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -1352,7 +1352,7 @@ function AnnouncementsTab({ settings }: { settings: any[] }) {
                 <span className="flex items-center gap-1.5">
                   <span className="opacity-75">✦</span>
                   <a
-                    href="https://wa.me/916263638053?text=I%20got%20contact%20from%20rajaboothouse"
+                    href="https://wa.me/916263638053?text=I%20got%20contact%20from%20cosstechcom"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:underline"
@@ -1393,7 +1393,7 @@ function AnnouncementsTab({ settings }: { settings: any[] }) {
                 <span className="flex items-center gap-1.5">
                   <span className="opacity-75">✦</span>
                   <a
-                    href="https://wa.me/916263638053?text=I%20got%20contact%20from%20rajaboothouse"
+                    href="https://wa.me/916263638053?text=I%20got%20contact%20from%20cosstechcom"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:underline"

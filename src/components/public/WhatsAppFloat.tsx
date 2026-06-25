@@ -45,7 +45,7 @@ export function WhatsAppFloat({
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="text-white text-sm font-bold">Raja Boot House</p>
+                <p className="text-white text-sm font-bold">CosstechCom</p>
                 <p className="text-white/70 text-[10px]">Typically replies within minutes</p>
               </div>
               <button
@@ -61,7 +61,7 @@ export function WhatsAppFloat({
             <div className="p-4">
               <div className="bg-[#DCF8C6] rounded-xl rounded-tl-sm px-3.5 py-2.5 text-sm text-[#303030] leading-relaxed shadow-xs">
                 <p>
-                  👋 Namaste! Welcome to <strong>Raja Boot House</strong>.
+                  👋 Namaste! Welcome to <strong>CosstechCom</strong>.
                 </p>
                 <p className="mt-1.5">
                   How can we help you today? Ask about sizes, collections, or delivery!

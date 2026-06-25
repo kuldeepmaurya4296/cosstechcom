@@ -32,7 +32,7 @@ import p6 from "@/assets/product-6.jpg";
 export const orders: Order[] = [
   {
     id: "o1",
-    number: "RBH-10421",
+    number: "COSS-10421",
     userId: "u1",
     vendorId: "v1",
     createdAt: "2025-05-28",
@@ -57,7 +57,7 @@ export const orders: Order[] = [
   },
   {
     id: "o2",
-    number: "RBH-10422",
+    number: "COSS-10422",
     userId: "u2",
     vendorId: "v2",
     createdAt: "2025-05-29",
@@ -82,7 +82,7 @@ export const orders: Order[] = [
   },
   {
     id: "o3",
-    number: "RBH-10423",
+    number: "COSS-10423",
     userId: "u3",
     vendorId: "v4",
     createdAt: "2025-05-30",
@@ -107,7 +107,7 @@ export const orders: Order[] = [
   },
   {
     id: "o4",
-    number: "RBH-10424",
+    number: "COSS-10424",
     userId: "u4",
     vendorId: "v2",
     createdAt: "2025-05-30",
@@ -132,7 +132,7 @@ export const orders: Order[] = [
   },
   {
     id: "o5",
-    number: "RBH-10425",
+    number: "COSS-10425",
     userId: "u1",
     vendorId: "v2",
     createdAt: "2025-05-15",
@@ -157,7 +157,7 @@ export const orders: Order[] = [
   },
   {
     id: "o6",
-    number: "RBH-10426",
+    number: "COSS-10426",
     userId: "u5",
     vendorId: "v1",
     createdAt: "2025-05-22",

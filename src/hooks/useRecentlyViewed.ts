@@ -15,7 +15,7 @@ export interface RecentlyViewedProduct {
   category?: string;
 }
 
-const STORAGE_KEY = "rbh-recently-viewed";
+const STORAGE_KEY = "coss-recently-viewed";
 const MAX_ITEMS = 8;
 
 export function useRecentlyViewed() {

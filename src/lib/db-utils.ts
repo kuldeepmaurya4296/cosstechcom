@@ -32,7 +32,7 @@ export function normalizeProduct(p: any) {
             ? "Paragon"
             : p.vendorId === "v4"
               ? "Goldstar"
-              : "Raja Boot House";
+              : "CosstechCom";
   }
 
   // Resolve brandId — only keep it as a string
@@ -61,7 +61,12 @@ export function normalizeProduct(p: any) {
     vendorId: p.vendorId && typeof p.vendorId === "object" && p.vendorId._id ? p.vendorId._id.toString() : toStr(p.vendorId),
     vendorName: p.vendorId && typeof p.vendorId === "object" ? p.vendorId.name : undefined,
     vendorStoreName: p.vendorId && typeof p.vendorId === "object" ? p.vendorId.storeName : undefined,
-    specifications: p.specifications || [],
+    specifications: p.specifications
+      ? p.specifications.map((spec: any) => ({
+          key: String(spec.key || ""),
+          value: String(spec.value || ""),
+        }))
+      : [],
     price: p.salePrice !== undefined ? Number(p.salePrice) : Number(p.price || 0),
     compareAt:
       p.salePrice !== undefined
@@ -93,7 +98,9 @@ export function normalizeProduct(p: any) {
     details:
       p.tags && p.tags.length > 0
         ? p.tags.map(String)
-        : p.details || ["Premium craftsmanship", "Durability assured"],
+        : Array.isArray(p.details)
+          ? p.details.map(String)
+          : ["Premium craftsmanship", "Durability assured"],
     colors: Array.from(
       new Set(p.variants ? p.variants.map((v: any) => String(v.color || "")) : p.colors || []),
     ) as string[],

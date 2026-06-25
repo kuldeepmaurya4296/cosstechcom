@@ -7,7 +7,7 @@ export interface Coupon {
 }
 export const coupons: Coupon[] = [
   {
-    code: "RAJA10",
+    code: "COSS10",
     type: "percent",
     value: 10,
     description: "10% off your first order",

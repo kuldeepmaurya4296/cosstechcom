@@ -39,13 +39,13 @@ export async function POST(request: Request) {
     const emailHtml = `
       <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #fcfcfd; border: 1px solid #eceef1; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-family: 'Playfair Display', serif; color: #191c1e; font-size: 26px; margin: 0;">Raja Boot House</h2>
-          <p style="color: #75777d; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; margin: 5px 0 0 0;">The Atelier</p>
+          <h2 style="font-family: 'Playfair Display', serif; color: #191c1e; font-size: 26px; margin: 0;">CosstechCom</h2>
+          <p style="color: #75777d; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; margin: 5px 0 0 0;">Multi-Vendor Marketplace</p>
         </div>
         <hr style="border: 0; border-top: 1px solid #eceef1; margin-bottom: 30px;" />
         <p style="color: #191c1e; font-size: 16px; line-height: 24px; margin-bottom: 20px;">Hello ${user.name},</p>
         <p style="color: #45474c; font-size: 14px; line-height: 22px; margin-bottom: 25px;">
-          You are receiving this email because you (or someone else) requested a password reset for your account at Raja Boot House.
+          You are receiving this email because you (or someone else) requested a password reset for your account at CosstechCom.
         </p>
         <div style="text-align: center; margin: 35px 0;">
           <a href="${resetUrl}" target="_blank" style="background-color: #000000; color: #ffffff; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -58,20 +58,20 @@ export async function POST(request: Request) {
         <p style="word-break: break-all; font-size: 12px; color: #535f74; background-color: #f2f4f7; padding: 10px; border-radius: 6px; margin-bottom: 30px;">
           ${resetUrl}
         </p>
-        <p style="color: #ba1a1a; font-size: 13px; line-height: 20px; font-weight: 500; margin-bottom: 25px;">
+        <p style="ba1a1a; font-size: 13px; line-height: 20px; font-weight: 500; margin-bottom: 25px;">
           Please note: This link is only valid for 1 hour. If you did not request this reset, you can safely ignore this email.
         </p>
         <hr style="border: 0; border-top: 1px solid #eceef1; margin: 30px 0 20px 0;" />
         <div style="text-align: center; color: #75777d; font-size: 12px;">
-          <p style="margin: 0 0 5px 0;">&copy; ${new Date().getFullYear()} Raja Boot House. All rights reserved.</p>
-          <p style="margin: 0;">Gorakhpur, Uttar Pradesh, India</p>
+          <p style="margin: 0 0 5px 0;">&copy; ${new Date().getFullYear()} CosstechCom. All rights reserved.</p>
+          <p style="margin: 0;">Jaipur, Rajasthan, India</p>
         </div>
       </div>
     `;
 
     await sendEmail({
       to: user.email,
-      subject: "Password Reset Request - Raja Boot House",
+      subject: "Password Reset Request - CosstechCom",
       html: emailHtml,
     });
 

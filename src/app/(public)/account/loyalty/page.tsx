@@ -1,7 +1,7 @@
 import { LoyaltyDashboard } from "@/modules/account/components/LoyaltyDashboard";
 
 export const metadata = {
-  title: "Loyalty Points | Raja Boot House",
+  title: "Loyalty Points | CosstechCom",
   description: "View and manage your loyalty points ledger balance and transaction logs.",
 };
 

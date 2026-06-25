@@ -5,8 +5,8 @@ import { auth } from "@/lib/auth";
 import { cachedJson } from "@/lib/api-cache";
 
 const defaultGeneral = {
-  storeName: "Raja Boot House",
-  supportEmail: "care@rajaboothouse.com",
+  storeName: "CosstechCom",
+  supportEmail: "care@cosstechcom.com",
   taxRate: 8,
   currency: "INR — ₹",
   currencySymbol: "₹",

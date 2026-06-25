@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Secure Checkout — Raja Boot House",
+  title: "Secure Checkout — CosstechCom",
   robots: {
     index: false,
     follow: false,

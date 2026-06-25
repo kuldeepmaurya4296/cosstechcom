@@ -59,7 +59,8 @@ async function getFeaturedProducts() {
       .populate({ path: "category", model: Category })
       .populate({ path: "brand", model: Brand })
       .sort({ createdAt: -1 })
-      .limit(4);
+      .limit(4)
+      .lean();
     return rawProducts.map((p: any) => normalizeProduct(p));
   } catch (err) {
     console.error("Failed to load featured products:", err);
@@ -75,7 +76,8 @@ async function getNewArrivalProducts() {
       .populate({ path: "category", model: Category })
       .populate({ path: "brand", model: Brand })
       .sort({ createdAt: -1 })
-      .limit(4);
+      .limit(4)
+      .lean();
     return rawProducts.map((p: any) => normalizeProduct(p));
   } catch (err) {
     console.error("Failed to load new arrivals:", err);
@@ -153,26 +155,26 @@ export default async function Home() {
 
   const storeJsonLd = {
     "@context": "https://schema.org",
-    "@type": "ShoeStore",
+    "@type": "Store",
     name: "CosstechCom",
-    image: "https://rbh.maurya-tech.com/rbh-logo.png",
+    image: "https://cosstechcom.maurya-tech.com/cosstechcom-logo.png",
     description:
-      "Multi-vendor footwear marketplace. Offers a wide range of premium footwear for men, women, and children from various sellers, brands, and categories.",
-    url: "https://rbh.maurya-tech.com",
+      "Multi-vendor marketplace. Offers a wide range of premium products across multiple categories including Electronics, Fashion, Grocery, Home, and Sports.",
+    url: "https://cosstechcom.maurya-tech.com",
     telephone: "+916263638053",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Main Footwear Market",
-      addressLocality: "Gorakhpur",
-      addressRegion: "Uttar Pradesh",
-      postalCode: "273001",
+      streetAddress: "Tech Park Road",
+      addressLocality: "Jaipur",
+      addressRegion: "Rajasthan",
+      postalCode: "302001",
       addressCountry: "IN",
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 26.7606,
-      longitude: 83.3731,
+      latitude: 26.9124,
+      longitude: 75.7873,
     },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",

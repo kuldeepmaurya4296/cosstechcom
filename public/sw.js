@@ -1,4 +1,4 @@
-const CACHE_NAME = "raja-boot-house-cache-v1";
+const CACHE_NAME = "cosstechcom-cache-v1";
 const ASSETS_TO_CACHE = [
   "/",
   "/manifest.json",
@@ -7,7 +7,7 @@ const ASSETS_TO_CACHE = [
   "/web-app-manifest-512x512.png",
   "/favicon-96x96.png",
   "/apple-touch-icon.png",
-  "/rbh-logo.png",
+  "/cosstechcom-logo.png",
 ];
 
 // Install Event - cache core shell

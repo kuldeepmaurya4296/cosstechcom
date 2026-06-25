@@ -64,8 +64,8 @@ export async function GET(request: Request) {
 }
 
 const defaultGeneral = {
-  storeName: "Raja Boot House",
-  supportEmail: "care@rajaboothouse.com",
+  storeName: "CosstechCom",
+  supportEmail: "care@cosstechcom.com",
   taxRate: 8,
   currency: "INR — ₹",
   currencySymbol: "₹",
@@ -318,13 +318,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate unique sequential orderId prefix as RBH and 5 digit suffix using atomic Mongo counter
+    // Generate unique sequential orderId prefix as COSS and 5 digit suffix using atomic Mongo counter
     const counter = await Counter.findOneAndUpdate(
       { _id: "orderId" },
       { $inc: { seq: 1 } },
       { upsert: true, new: true },
     );
-    const orderId = `RBH-${String(counter.seq).padStart(5, "0")}`;
+    const orderId = `COSS-${String(counter.seq).padStart(5, "0")}`;
 
     // Now decrement stock atomically
     const decrementedItems = [];

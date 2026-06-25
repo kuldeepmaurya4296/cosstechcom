@@ -39,7 +39,7 @@ export const docsSections: DocSection[] = [
     icon: BookOpen,
     category: "getting-started",
     description:
-      "Learn about the brand story, core vision, and technology stack of Raja Boot House.",
+      "Learn about the brand story, core vision, and technology stack of CosstechCom.",
     content: (
       <div className="space-y-6">
         <div className="border-b border-border/80 pb-4">
@@ -53,14 +53,12 @@ export const docsSections: DocSection[] = [
 
         <section className="space-y-3">
           <h2 className="font-serif text-xl font-bold text-charcoal dark:text-cream">
-            The Raja Boot House Story
+            The CosstechCom Story
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Established in <strong>2025</strong> by <strong>Bipin Gupta</strong> and co-founder{" "}
-            <strong>Prince Gupta</strong>, Raja Boot House is a premium retail footwear brand. It
-            carries a comprehensive catalog spanning daily slippers, formal leather shoes, sports
-            trainers, ethnic sandals, and dulha-dulhan (wedding/bridal) selections. The platform
-            serves all demographics (Men, Women, and Children), offering a premium digital shopping
+            Established in <strong>2025</strong>, CosstechCom is a next-generation multi-category multi-vendor e-commerce marketplace. It
+            carries a comprehensive catalog spanning electronics, fashion, grocery, home & furniture, and sports & fitness. The platform
+            connects verified brands and local vendors directly with consumers nationwide, offering a premium digital shopping
             experience.
           </p>
         </section>
@@ -70,11 +68,10 @@ export const docsSections: DocSection[] = [
             Business Model
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Raja Boot House operates as a direct-to-consumer (B2C) e-commerce portal, bridging local
-            craftsmanship with digital convenience. Originally built as a single-vendor retail
-            outlet managed directly by Bipin Gupta, the platform is architected to scale into a
-            multi-vendor logistics hub, hosting third-party footwear brands and managing split
-            settlements.
+            CosstechCom operates as a robust multi-vendor marketplace, bridging premium brands and local
+            distributors with digital convenience. The platform is architected as a complete multi-vendor
+            hub, hosting third-party sellers across multiple categories and managing automated split
+            settlements, order routing, and delivery dispatches.
           </p>
         </section>
 
@@ -182,7 +179,7 @@ export const docsSections: DocSection[] = [
                 </tr>
                 <tr>
                   <td className="p-3 font-semibold text-charcoal dark:text-cream">Admin</td>
-                  <td className="p-3">Credentials Panel (Bipin Gupta)</td>
+                  <td className="p-3">Credentials Panel (Admin Role)</td>
                   <td className="p-3">
                     Full system control, financial logs, global settings, logistics staff, CMS,
                     review moderation.

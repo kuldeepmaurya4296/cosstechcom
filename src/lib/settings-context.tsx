@@ -27,8 +27,8 @@ interface SettingsContextType extends Settings {
 }
 
 const defaultSettings: Settings = {
-  storeName: "Raja Boot House",
-  supportEmail: "care@rajaboothouse.com",
+  storeName: "CosstechCom",
+  supportEmail: "care@cosstechcom.com",
   currency: "INR — ₹",
   currencySymbol: "₹",
   taxRate: 8,

@@ -177,7 +177,7 @@ export default async function ProductPage({ params }: PageProps) {
     },
     offers: {
       "@type": "Offer",
-      url: `https://rbh.maurya-tech.com/shop/${data.product.slug}`,
+      url: `https://cosstechcom.maurya-tech.com/shop/${data.product.slug}`,
       priceCurrency: "INR",
       price: data.product.price,
       itemCondition: "https://schema.org/NewCondition",
@@ -188,7 +188,7 @@ export default async function ProductPage({ params }: PageProps) {
       data.product.reviewsCount > 0
         ? {
             "@type": "AggregateRating",
-            ratingValue: data.product.rating,
+            aggregateRating: data.product.rating,
             reviewCount: data.product.reviewsCount,
           }
         : undefined,
@@ -202,27 +202,27 @@ export default async function ProductPage({ params }: PageProps) {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://rbh.maurya-tech.com",
+        item: "https://cosstechcom.maurya-tech.com",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Shop",
-        item: "https://rbh.maurya-tech.com/shop",
+        item: "https://cosstechcom.maurya-tech.com/shop",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: data.product.category
           ? data.product.category.charAt(0).toUpperCase() + data.product.category.slice(1)
-          : "Footwear",
-        item: `https://rbh.maurya-tech.com/shop?category=${data.product.category || "all"}`,
+          : "Products",
+        item: `https://cosstechcom.maurya-tech.com/shop?category=${data.product.category || "all"}`,
       },
       {
         "@type": "ListItem",
         position: 4,
         name: data.product.name,
-        item: `https://rbh.maurya-tech.com/shop/${data.product.slug}`,
+        item: `https://cosstechcom.maurya-tech.com/shop/${data.product.slug}`,
       },
     ],
   };

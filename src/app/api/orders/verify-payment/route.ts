@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      orderId, // Local order ID (e.g. RBH-...)
+      orderId, // Local order ID (e.g. COSS-...)
     } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {

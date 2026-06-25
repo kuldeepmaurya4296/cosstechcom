@@ -7,14 +7,14 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — Raja Boot House",
-  description: "Read the Terms of Service and agreements for using the Raja Boot House portal.",
+  title: "Terms & Conditions — CosstechCom",
+  description: "Read the Terms of Service and agreements for using the CosstechCom portal.",
   alternates: {
     canonical: "/terms",
   },
   openGraph: {
-    title: "Terms & Conditions — Raja Boot House",
-    description: "Read the Terms of Service and agreements for using the Raja Boot House portal.",
+    title: "Terms & Conditions — CosstechCom",
+    description: "Read the Terms of Service and agreements for using the CosstechCom portal.",
     type: "website",
   },
 };

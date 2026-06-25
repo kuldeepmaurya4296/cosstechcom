@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     return new Response(
       `<html>
         <head>
-          <title>Unsubscribed — Raja Boot House</title>
+          <title>Unsubscribed — CosstechCom</title>
           <style>
             body { font-family: sans-serif; background-color: #FAF9F6; color: #1C1917; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
             .card { background: white; padding: 40px; border-radius: 20px; border: 1px solid #E4E4E7; text-align: center; max-width: 400px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         <body>
           <div class="card">
             <h1>You have unsubscribed</h1>
-            <p>You have been successfully removed from the Raja Footwear Club newsletter. You will no longer receive marketing emails from us.</p>
+            <p>You have been successfully removed from the CosstechCom Club newsletter. You will no longer receive marketing emails from us.</p>
             <a href="/">Go to Homepage</a>
           </div>
         </body>

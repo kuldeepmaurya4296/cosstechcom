@@ -211,7 +211,7 @@ export function Hero({ initialBanners }: { initialBanners?: any[] }) {
                   <div className="relative aspect-[4/3] md:aspect-[4/5] rounded-2xl overflow-hidden shadow-elevated border border-border/60 bg-white">
                     <Image
                       src={active.image}
-                      alt="Raja Boot House"
+                      alt="CosstechCom"
                       width={800}
                       height={1000}
                       priority={current === 0}

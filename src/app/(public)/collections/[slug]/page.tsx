@@ -53,23 +53,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!collection) {
     return {
-      title: "Collection Not Found — Raja Boot House",
+      title: "Collection Not Found — CosstechCom",
     };
   }
 
   return {
-    title: `${collection.name} — Raja Boot House`,
+    title: `${collection.name} — CosstechCom`,
     description:
       collection.description ||
-      `Browse the exclusive ${collection.name} collection at Raja Boot House.`,
+      `Browse the exclusive ${collection.name} collection at CosstechCom.`,
     alternates: {
       canonical: `/collections/${slug}`,
     },
     openGraph: {
-      title: `${collection.name} — Raja Boot House`,
+      title: `${collection.name} — CosstechCom`,
       description:
         collection.description ||
-        `Browse the exclusive ${collection.name} collection at Raja Boot House.`,
+        `Browse the exclusive ${collection.name} collection at CosstechCom.`,
       images: [{ url: collection.imageUrl || "/assets/hero-boots.jpg" }],
     },
   };
@@ -101,8 +101,8 @@ export default async function CollectionPage({ params }: PageProps) {
     name: collection.name,
     description:
       collection.description ||
-      `Browse the exclusive ${collection.name} collection at Raja Boot House.`,
-    url: `https://rbh.maurya-tech.com/collections/${collection.slug}`,
+      `Browse the exclusive ${collection.name} collection at CosstechCom.`,
+    url: `https://cosstechcom.maurya-tech.com/collections/${collection.slug}`,
     image: collection.imageUrl || "/assets/hero-boots.jpg",
     mainEntity: {
       "@type": "ItemList",
@@ -110,7 +110,7 @@ export default async function CollectionPage({ params }: PageProps) {
       itemListElement: products.slice(0, 12).map((product: any, idx: number) => ({
         "@type": "ListItem",
         position: idx + 1,
-        url: `https://rbh.maurya-tech.com/shop/${product.slug}`,
+        url: `https://cosstechcom.maurya-tech.com/shop/${product.slug}`,
       })),
     },
   };
@@ -123,19 +123,19 @@ export default async function CollectionPage({ params }: PageProps) {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://rbh.maurya-tech.com",
+        item: "https://cosstechcom.maurya-tech.com",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Shop",
-        item: "https://rbh.maurya-tech.com/shop",
+        item: "https://cosstechcom.maurya-tech.com/shop",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: collection.name,
-        item: `https://rbh.maurya-tech.com/collections/${collection.slug}`,
+        item: `https://cosstechcom.maurya-tech.com/collections/${collection.slug}`,
       },
     ],
   };

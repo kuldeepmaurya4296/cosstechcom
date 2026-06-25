@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { currency = "INR", receipt } = body;
 
-    // receipt is the local orderId (RBH-XXXXX). It must reference a real order.
+    // receipt is the local orderId (COSS-XXXXX). It must reference a real order.
     if (!receipt) {
       return NextResponse.json({ error: "Order reference (receipt) is required" }, { status: 400 });
     }

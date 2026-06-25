@@ -13,18 +13,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!section) {
     return {
-      title: "Page Not Found — Raja Boot House Docs",
+      title: "Page Not Found — CosstechCom Docs",
     };
   }
 
   return {
-    title: `${section.title} — Raja Boot House Docs`,
+    title: `${section.title} — CosstechCom Docs`,
     description: section.description,
     alternates: {
       canonical: `/docs/${slug}`,
     },
     openGraph: {
-      title: `${section.title} — Raja Boot House Docs`,
+      title: `${section.title} — CosstechCom Docs`,
       description: section.description,
       type: "article",
     },

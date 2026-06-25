@@ -12,7 +12,7 @@ export function OrderConfirmation({ orderId }: { orderId?: string }) {
       <CheckCircle2 className="h-16 w-16 mx-auto text-cognac" />
       <h1 className="font-serif text-4xl font-bold mt-4">Order placed.</h1>
       <p className="text-muted-foreground mt-2">
-        Order #{orderId || "RBH-10428"} — confirmation sent to your email.
+        Order #{orderId || "COSS-10428"} — confirmation sent to your email.
       </p>
       <p className="text-sm text-muted-foreground mt-1">Estimated delivery: 5–7 business days.</p>
       <div className="mt-8 flex gap-3 justify-center">

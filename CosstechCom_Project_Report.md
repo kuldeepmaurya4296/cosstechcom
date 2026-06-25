@@ -14,7 +14,7 @@
 
 ## 1. Executive Summary
 
-This project transforms the existing **Raja Boot House** single-vendor footwear e-commerce application into **CosstechCom** — a full-featured, Flipkart-style multi-vendor marketplace. The new platform will support unlimited vendor onboarding, multi-category product listings (electronics, fashion, grocery, home, appliances, electrical, sports, beauty, books, etc.), automated order splitting, commission-based payouts, and 5 distinct user dashboards.
+This project transforms the existing **CosstechCom** single-vendor footwear e-commerce application into **CosstechCom** — a full-featured, Flipkart-style multi-vendor marketplace. The new platform will support unlimited vendor onboarding, multi-category product listings (electronics, fashion, grocery, home, appliances, electrical, sports, beauty, books, etc.), automated order splitting, commission-based payouts, and 5 distinct user dashboards.
 
 ### Key Metrics
 

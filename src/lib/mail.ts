@@ -24,7 +24,7 @@ export async function sendEmail({
     },
   });
 
-  let storeName = "Raja Boot House";
+  let storeName = "CosstechCom";
   try {
     await connectToDatabase();
     const generalDoc = await Settings.findOne({ key: "general" }).lean();

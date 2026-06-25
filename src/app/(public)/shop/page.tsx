@@ -354,17 +354,17 @@ export default async function ShopPage({ searchParams }: PageProps) {
     "@type": "CollectionPage",
     name:
       category && category !== "all"
-        ? `${category.charAt(0).toUpperCase() + category.slice(1)} Footwear`
-        : "Footwear Catalog",
-    description: "Browse our premium footwear collection at CosstechCom.",
-    url: `https://rbh.maurya-tech.com${canonicalPath}`,
+        ? `${category.charAt(0).toUpperCase() + category.slice(1)} Products`
+        : "Products Catalog",
+    description: "Browse our premium products collection at CosstechCom.",
+    url: `https://cosstechcom.maurya-tech.com${canonicalPath}`,
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: data.total,
       itemListElement: data.products.slice(0, 12).map((product: any, idx: number) => ({
         "@type": "ListItem",
         position: idx + 1,
-        url: `https://rbh.maurya-tech.com/shop/${product.slug}`,
+        url: `https://cosstechcom.maurya-tech.com/shop/${product.slug}`,
       })),
     },
   };
@@ -377,13 +377,13 @@ export default async function ShopPage({ searchParams }: PageProps) {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://rbh.maurya-tech.com",
+        item: "https://cosstechcom.maurya-tech.com",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Shop",
-        item: "https://rbh.maurya-tech.com/shop",
+        item: "https://cosstechcom.maurya-tech.com/shop",
       },
       ...(category && category !== "all"
         ? [
@@ -391,7 +391,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
               "@type": "ListItem",
               position: 3,
               name: category.charAt(0).toUpperCase() + category.slice(1),
-              item: `https://rbh.maurya-tech.com/shop?category=${category}`,
+              item: `https://cosstechcom.maurya-tech.com/shop?category=${category}`,
             },
           ]
         : []),

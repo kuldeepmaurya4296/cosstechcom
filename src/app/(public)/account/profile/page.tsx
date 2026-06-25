@@ -274,7 +274,7 @@ export default function AccountProfilePage() {
             <div className="bg-muted/40 rounded-xl p-3.5 border border-border/40 text-[10px] text-muted-foreground space-y-1.5">
               <p className="font-bold text-foreground flex items-center gap-1">
                 <Sparkles className="h-3 w-3 text-brass" />
-                <span>Style Haven Security Tip</span>
+                <span>CosstechCom Security Tip</span>
               </p>
               <p className="leading-relaxed">
                 Never share your login details or OTPs with anyone. We will never ask for your

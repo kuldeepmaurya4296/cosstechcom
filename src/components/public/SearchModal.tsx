@@ -29,7 +29,7 @@ export function SearchModal({ onClose, categoriesList }: SearchModalProps) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("rbh-recent-searches");
+      const stored = localStorage.getItem("coss-recent-searches");
       if (stored) setRecentSearches(JSON.parse(stored));
     } catch {}
   }, []);
@@ -63,7 +63,7 @@ export function SearchModal({ onClose, categoriesList }: SearchModalProps) {
     const updated = [trimmed, ...recentSearches.filter((s) => s !== trimmed)].slice(0, 5);
     setRecentSearches(updated);
     try {
-      localStorage.setItem("rbh-recent-searches", JSON.stringify(updated));
+      localStorage.setItem("coss-recent-searches", JSON.stringify(updated));
     } catch {}
 
     onClose();

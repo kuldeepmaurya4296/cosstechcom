@@ -65,25 +65,28 @@ export async function POST(request: Request) {
       .lean();
     const productById = new Map(products.map((p: any) => [p._id.toString(), p]));
 
-    const items = lines.map((l: any) => {
-      const prod = productById.get(l.productId.toString());
-      if (!prod) {
-        throw new Error(`Product not found in database: ${l.name || l.productId}`);
-      }
-      const vendorUser = prod.vendorId as any;
-      return {
-        productId: l.productId,
-        name: prod.name,
-        price: prod.salePrice,
-        image: l.image || (prod.images?.[0]?.url),
-        size: l.size,
-        color: l.color,
-        quantity: l.quantity,
-        slug: prod.slug,
-        vendorId: vendorUser._id || vendorUser,
-        vendorName: vendorUser.storeName || vendorUser.name || "Unknown Seller",
-      };
-    });
+    const items = lines
+      .map((l: any) => {
+        const prod = productById.get(l.productId.toString());
+        if (!prod) {
+          console.warn(`Skipping missing product from cart: ${l.name || l.productId}`);
+          return null;
+        }
+        const vendorUser = prod.vendorId as any;
+        return {
+          productId: l.productId,
+          name: prod.name,
+          price: prod.salePrice,
+          image: l.image || (prod.images?.[0]?.url),
+          size: l.size,
+          color: l.color,
+          quantity: l.quantity,
+          slug: prod.slug,
+          vendorId: vendorUser._id || vendorUser,
+          vendorName: vendorUser.storeName || vendorUser.name || "Unknown Seller",
+        };
+      })
+      .filter(Boolean);
 
     // Find and update or create cart. Reset emailSent flag.
     const cart = await Cart.findOneAndUpdate(

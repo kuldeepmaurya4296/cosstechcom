@@ -132,7 +132,7 @@ export function SizeSelector({
                 {activeTab === "chart" ? (
                   <div className="space-y-4">
                     <p className="text-xs text-muted-foreground font-medium">
-                      All shoes in Raja Boot House follow the standard UK/India sizing convention.
+                      All products on CosstechCom follow standard sizing conventions.
                       Use this table to convert your sizing to US or European formats.
                     </p>
 

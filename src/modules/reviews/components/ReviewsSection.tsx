@@ -93,7 +93,7 @@ export function ReviewsSection({ reviews, productId }: ReviewsSectionProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const stored = localStorage.getItem("rbh-helpful-votes");
+        const stored = localStorage.getItem("coss-helpful-votes");
         if (stored) {
           setVotedReviews(JSON.parse(stored));
         }
@@ -306,7 +306,7 @@ export function ReviewsSection({ reviews, productId }: ReviewsSectionProps) {
       const updatedVotes = [...votedReviews, reviewId];
       setVotedReviews(updatedVotes);
       if (typeof window !== "undefined") {
-        localStorage.setItem("rbh-helpful-votes", JSON.stringify(updatedVotes));
+        localStorage.setItem("coss-helpful-votes", JSON.stringify(updatedVotes));
       }
     } catch (err) {
       console.error("Helpful vote error:", err);

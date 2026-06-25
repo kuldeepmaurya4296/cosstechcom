@@ -147,7 +147,7 @@ export function Navbar() {
             <span className="opacity-75">✦</span> {item}
           </span>
         ))}
-        <span className="flex items-center gap-1.5 normal-case tracking-normal">
+        {/* <span className="flex items-center gap-1.5 normal-case tracking-normal">
           <span className="opacity-75">✦</span> Designed &amp; Developed by{" "}
           <a
             href="https://kuldeep.maurya-tech.com/"
@@ -168,7 +168,7 @@ export function Navbar() {
           >
             Maurya Technologies
           </a>
-        </span>
+        </span> */}
       </>
     );
   };
@@ -176,11 +176,10 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 ${
-          scrolled
+        className={`sticky top-0 z-40 transition-all duration-300 ${scrolled
             ? "bg-cream/92 backdrop-blur-lg shadow-sm border-b border-border/60"
             : "bg-cream/85 backdrop-blur-md border-b border-border"
-        }`}
+          }`}
       >
         {/* Announcement strip */}
         {announcementsActive && announcements.length > 0 && (
@@ -239,11 +238,10 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-6 flex-1 justify-center">
             <Link
               href="/shop"
-              className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] pb-1 border-b-2 ${
-                path === "/shop" && !searchParams.get("category")
+              className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] pb-1 border-b-2 ${path === "/shop" && !searchParams.get("category")
                   ? "border-primary text-primary"
                   : "border-transparent text-foreground/75 hover:border-primary/40"
-              }`}
+                }`}
             >
               Shop All
             </Link>
@@ -258,11 +256,10 @@ export function Navbar() {
                   onMouseLeave={() => setActiveMega(null)}
                 >
                   <button
-                    className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 ${
-                      isActive
+                    className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 ${isActive
                         ? "border-primary text-primary"
                         : "border-transparent text-foreground/75 hover:border-primary/40"
-                    }`}
+                      }`}
                   >
                     {lvl1.name}
                     <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeMega === lvl1.id ? "rotate-180" : ""}`} />
@@ -374,7 +371,7 @@ export function Navbar() {
             </Link>
 
             {/* User / Sign In */}
-            {session ? (
+            {mounted && session ? (
               <Link
                 href={accountLink}
                 className="ml-1 inline-flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary text-xs font-bold uppercase shadow-sm shrink-0 transition-all overflow-hidden"
@@ -393,10 +390,10 @@ export function Navbar() {
                   <span>
                     {session.user?.name
                       ? session.user.name
-                          .split(" ")
-                          .map((n: any) => n[0])
-                          .join("")
-                          .slice(0, 2)
+                        .split(" ")
+                        .map((n: any) => n[0])
+                        .join("")
+                        .slice(0, 2)
                       : "U"}
                   </span>
                 )}

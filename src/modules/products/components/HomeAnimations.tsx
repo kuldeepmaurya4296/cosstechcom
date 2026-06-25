@@ -13,7 +13,7 @@ const BRANDS = [
   "Touch Footwear",
   "Paragon",
   "Goldstar Shoes",
-  "Raja Exclusive",
+  "Cosstech Exclusive",
   "Touch Heels",
   "Lakhani Canvas",
   "Paragon Comfort",
@@ -149,17 +149,17 @@ export function EditorialBanner({ newest }: EditorialBannerProps) {
         <div className="absolute inset-0 grain opacity-20" />
         <div className="relative">
           <p className="text-[11px] uppercase tracking-[0.3em] text-brass font-bold mb-3">
-            Gupta Brothers Enterprise
+            CosstechCom Quality Certified
           </p>
           <h3 className="font-serif text-3xl md:text-5xl font-bold leading-tight">
-            Quality footwear
+            Quality products
             <br />
             <em className="text-brass not-italic">for all demographics.</em>
           </h3>
           <p className="mt-5 text-cream/70 text-sm leading-relaxed max-w-md">
-            Raja Boot House has been a retail staple since 2025 under the stewardship of Prince and
-            Bipin Gupta. We offer hand-finished design profiles, bridal/groom wedding accessories,
-            and durability guaranteed by India's biggest national brands.
+            CosstechCom is a premium multi-vendor marketplace connecting you directly with top
+            verified brands and local sellers across India. We guarantee premium quality, 
+            fast delivery, and verified merchant support.
           </p>
           <Link
             href="/shop"

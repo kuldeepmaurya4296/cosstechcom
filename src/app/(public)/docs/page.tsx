@@ -3,16 +3,16 @@ import { docsSections } from "@/data/docs-content";
 import { notFound } from "next/navigation";
 
 export const metadata = {
-  title: "System Documentation — Raja Boot House",
+  title: "System Documentation — CosstechCom",
   description:
-    "Comprehensive system manual, customer checkout guides, and administrator guides for Raja Boot House.",
+    "Comprehensive system manual, customer checkout guides, and administrator guides for CosstechCom.",
   alternates: {
     canonical: "/docs",
   },
   openGraph: {
-    title: "System Documentation — Raja Boot House",
+    title: "System Documentation — CosstechCom",
     description:
-      "Comprehensive system manual, customer checkout guides, and administrator guides for Raja Boot House.",
+      "Comprehensive system manual, customer checkout guides, and administrator guides for CosstechCom.",
     type: "website",
   },
 };

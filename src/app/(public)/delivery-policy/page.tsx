@@ -7,16 +7,16 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy — Raja Boot House",
+  title: "Shipping & Delivery Policy — CosstechCom",
   description:
-    "Learn about our shipping coverage, fees, delivery timelines, and logistics partners at Raja Boot House.",
+    "Learn about our shipping coverage, fees, delivery timelines, and logistics partners at CosstechCom.",
   alternates: {
     canonical: "/delivery-policy",
   },
   openGraph: {
-    title: "Shipping & Delivery Policy — Raja Boot House",
+    title: "Shipping & Delivery Policy — CosstechCom",
     description:
-      "Learn about our shipping coverage, fees, delivery timelines, and logistics partners at Raja Boot House.",
+      "Learn about our shipping coverage, fees, delivery timelines, and logistics partners at CosstechCom.",
     type: "website",
   },
 };

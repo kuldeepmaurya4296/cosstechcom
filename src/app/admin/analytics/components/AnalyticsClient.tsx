@@ -138,7 +138,7 @@ export default function AnalyticsClient({
     products.map((p) => [
       p._id,
       {
-        brandName: brandMap.get(p.brand) || "Raja Boot House",
+        brandName: brandMap.get(p.brand) || "CosstechCom",
         categoryName: categoryMap.get(p.category) || "Uncategorized",
       },
     ]),
@@ -529,7 +529,7 @@ export default function AnalyticsClient({
       const rev = item.price * qty;
       const info = productMap.get(item.productId);
       const catName = info?.categoryName || "Uncategorized";
-      const brandName = info?.brandName || "Raja Boot House";
+      const brandName = info?.brandName || "CosstechCom";
 
       categorySales[catName] = (categorySales[catName] || 0) + rev;
       brandSales[brandName] = (brandSales[brandName] || 0) + rev;
@@ -575,7 +575,7 @@ export default function AnalyticsClient({
   const topProductsList = Object.entries(productSalesMap)
     .map(([productId, sales]) => {
       const p = products.find((prod) => prod._id === productId);
-      const brandName = p ? brandMap.get(p.brand) || "Raja Boot House" : "Raja Boot House";
+      const brandName = p ? brandMap.get(p.brand) || "CosstechCom" : "CosstechCom";
       const categoryName = p ? categoryMap.get(p.category) || "Uncategorized" : "Uncategorized";
       return {
         id: productId,
@@ -680,7 +680,7 @@ export default function AnalyticsClient({
           const margin = price * qty - itemCogs;
 
           const p = products.find((prod) => prod._id === item.productId);
-          const brandName = p ? brandMap.get(p.brand) || "Raja Boot House" : "Raja Boot House";
+          const brandName = p ? brandMap.get(p.brand) || "CosstechCom" : "CosstechCom";
           const categoryName = p ? categoryMap.get(p.category) || "Uncategorized" : "Uncategorized";
 
           rows.push([
@@ -843,7 +843,7 @@ export default function AnalyticsClient({
           const prodCogs = grossRev * 0.6;
           const profit = grossRev - prodCogs;
 
-          const brandName = brandMap.get(p.brand) || "Raja Boot House";
+          const brandName = brandMap.get(p.brand) || "CosstechCom";
           const categoryName = categoryMap.get(p.category) || "Uncategorized";
           return [
             p._id,

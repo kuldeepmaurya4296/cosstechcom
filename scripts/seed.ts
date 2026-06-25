@@ -303,6 +303,8 @@ async function seed() {
         name: "Electronics",
         slug: "electronics",
         icon: "Cpu",
+        imageUrl: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=1200&auto=format&fit=crop",
         subs: [
           { name: "Mobiles", slug: "mobiles", subSubs: ["Smartphones", "Feature Phones"] },
           { name: "Laptops", slug: "laptops", subSubs: ["Gaming Laptops", "Business Laptops"] },
@@ -313,6 +315,8 @@ async function seed() {
         name: "Fashion",
         slug: "fashion",
         icon: "Shirt",
+        imageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop",
         subs: [
           { name: "Men's Wear", slug: "mens-wear", subSubs: ["T-Shirts", "Shirts", "Sneakers"] },
           { name: "Women's Wear", slug: "womens-wear", subSubs: ["Sarees", "Kurtas", "Heels"] },
@@ -322,6 +326,8 @@ async function seed() {
         name: "Grocery",
         slug: "grocery",
         icon: "ShoppingBag",
+        imageUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
         subs: [
           { name: "Staples", slug: "staples", subSubs: ["Rice & Flour", "Spices & Oils"] },
           { name: "Beverages", slug: "beverages", subSubs: ["Tea", "Coffee"] },
@@ -331,6 +337,8 @@ async function seed() {
         name: "Home & Furniture",
         slug: "home-furniture",
         icon: "Home",
+        imageUrl: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1200&auto=format&fit=crop",
         subs: [
           { name: "Furniture", slug: "furniture", subSubs: ["Sofas", "Dining Tables"] },
           { name: "Kitchen", slug: "kitchen", subSubs: ["Cookware", "Juicers"] },
@@ -340,6 +348,8 @@ async function seed() {
         name: "Sports & Fitness",
         slug: "sports-fitness",
         icon: "Activity",
+        imageUrl: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop",
+        bannerImageUrl: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop",
         subs: [
           { name: "Gym Equipment", slug: "gym-equipment", subSubs: ["Dumbbells", "Yoga Mats"] },
           { name: "Sports Gear", slug: "sports-gear", subSubs: ["Cricket Bats", "Football"] },
@@ -356,6 +366,8 @@ async function seed() {
         slug: dept.slug,
         level: 1,
         icon: dept.icon,
+        imageUrl: dept.imageUrl,
+        bannerImageUrl: dept.bannerImageUrl,
         commissionRate: 10,
         parentId: null,
       });
@@ -428,6 +440,7 @@ async function seed() {
         brandName: "Samsung",
         vendorIndex: 0,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "256GB", color: "Titanium Gray", colorHex: COLOR_HEXES.gray, stock: 15, sku: "SAM-S24U-256G-GR" },
           { size: "512GB", color: "Titanium Black", colorHex: COLOR_HEXES.black, stock: 10, sku: "SAM-S24U-512G-BL" },
@@ -449,6 +462,7 @@ async function seed() {
         brandName: "HP",
         vendorIndex: 0,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "15.6 Inch", color: "Natural Silver", colorHex: COLOR_HEXES.silver, stock: 8, sku: "HP-PAV15-SL" },
         ],
@@ -469,6 +483,7 @@ async function seed() {
         brandName: "JBL",
         vendorIndex: 0,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "Regular", color: "Black", colorHex: COLOR_HEXES.black, stock: 25, sku: "JBL-WFLEX-BL" },
           { size: "Regular", color: "White", colorHex: COLOR_HEXES.white, stock: 20, sku: "JBL-WFLEX-WH" },
@@ -490,6 +505,7 @@ async function seed() {
         brandName: "Nike",
         vendorIndex: 1,
         gender: "Men",
+        imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "8", color: "Black-White", colorHex: COLOR_HEXES.black, stock: 12, sku: "NKE-AMAX-8-BL" },
           { size: "9", color: "Black-White", colorHex: COLOR_HEXES.black, stock: 15, sku: "NKE-AMAX-9-BL" },
@@ -511,6 +527,7 @@ async function seed() {
         brandName: "Sabyasachi",
         vendorIndex: 1,
         gender: "Women",
+        imageUrl: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "Free Size", color: "Crimson Red", colorHex: COLOR_HEXES.red, stock: 5, sku: "SAB-SRE-RED" },
         ],
@@ -531,6 +548,7 @@ async function seed() {
         brandName: "Tata Tea",
         vendorIndex: 2,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "1 kg", color: "Red Label", colorHex: COLOR_HEXES.red, stock: 100, sku: "TATA-TG-1K" },
         ],
@@ -549,6 +567,7 @@ async function seed() {
         brandName: "Patanjali",
         vendorIndex: 2,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "5 kg", color: "White Rice", colorHex: COLOR_HEXES.white, stock: 50, sku: "PAT-BAS-5K" },
         ],
@@ -568,6 +587,7 @@ async function seed() {
         brandName: "Godrej",
         vendorIndex: 3,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "3 Seater", color: "Cocoa Brown", colorHex: COLOR_HEXES.brown, stock: 5, sku: "DWD-SOFA-3S-BR" },
         ],
@@ -587,6 +607,7 @@ async function seed() {
         brandName: "Prestige",
         vendorIndex: 3,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "28 cm", color: "Granite Black", colorHex: COLOR_HEXES.black, stock: 30, sku: "PRS-PAN-28" },
         ],
@@ -607,6 +628,7 @@ async function seed() {
         brandName: "Decathlon",
         vendorIndex: 4,
         gender: "None",
+        imageUrl: "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?auto=format&fit=crop&w=600&q=80",
         variants: [
           { size: "5kg Pair", color: "Black", colorHex: COLOR_HEXES.black, stock: 15, sku: "DEC-HEX-5K" },
           { size: "10kg Pair", color: "Black", colorHex: COLOR_HEXES.black, stock: 10, sku: "DEC-HEX-10K" },
@@ -636,7 +658,7 @@ async function seed() {
         ...v,
         images: [
           {
-            url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+            url: t.imageUrl,
             public_id: `product-placeholder-${slug}`,
           },
         ],
@@ -652,7 +674,7 @@ async function seed() {
         gender: t.gender,
         images: [
           {
-            url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+            url: t.imageUrl,
             public_id: `product-placeholder-${slug}`,
           },
         ],

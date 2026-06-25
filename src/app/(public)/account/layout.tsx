@@ -76,7 +76,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
               Verified Account
             </span>
             <span className="text-[10px] text-cream/80 font-semibold block">
-              Raja Style Haven Member
+              CosstechCom Club Member
             </span>
           </div>
         </div>

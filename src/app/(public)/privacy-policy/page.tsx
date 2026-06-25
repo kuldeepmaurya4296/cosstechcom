@@ -7,16 +7,16 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Raja Boot House",
+  title: "Privacy Policy — CosstechCom",
   description:
-    "Learn about how we collect, secure, and manage your personal information at Raja Boot House.",
+    "Learn about how we collect, secure, and manage your personal information at CosstechCom.",
   alternates: {
     canonical: "/privacy-policy",
   },
   openGraph: {
-    title: "Privacy Policy — Raja Boot House",
+    title: "Privacy Policy — CosstechCom",
     description:
-      "Learn about how we collect, secure, and manage your personal information at Raja Boot House.",
+      "Learn about how we collect, secure, and manage your personal information at CosstechCom.",
     type: "website",
   },
 };

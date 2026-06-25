@@ -20,7 +20,7 @@ export default async function NewCollectionPage() {
     const brandName =
       p.brand && typeof p.brand === "object" && "name" in p.brand
         ? p.brand.name
-        : p.brand || "Raja Boot House";
+        : p.brand || "CosstechCom";
 
     return {
       id: p._id.toString(),

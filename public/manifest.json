@@ -1,7 +1,7 @@
 {
-  "name": "Raja Boot House",
-  "short_name": "Raja Boot",
-  "description": "Leather Boots & Premium Footwear.",
+  "name": "CosstechCom",
+  "short_name": "CosstechCom",
+  "description": "CosstechCom Ultimate Multi-Vendor Marketplace.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
