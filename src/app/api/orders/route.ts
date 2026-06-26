@@ -57,7 +57,22 @@ export async function GET(request: Request) {
     }
 
     const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
-    return NextResponse.json(orders);
+    
+    // Attach sub-orders for customer and admin view
+    const orderIds = orders.map((o) => o._id);
+    const subOrders = await SubOrder.find({ parentOrderId: { $in: orderIds } }).lean();
+    
+    const enrichedOrders = orders.map((o: any) => ({
+      ...o,
+      subOrders: subOrders
+        .filter((so: any) => so.parentOrderId.toString() === o._id.toString())
+        .map((so: any) => ({
+          ...so,
+          id: so._id.toString(),
+        })),
+    }));
+
+    return NextResponse.json(enrichedOrders);
   } catch (error: any) {
     console.error("Failed to fetch orders:", error);
     return NextResponse.json({ error: error.message || "Failed to fetch orders" }, { status: 500 });

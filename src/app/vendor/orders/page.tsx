@@ -19,6 +19,7 @@ interface SubOrderItem {
 }
 
 interface SubOrder {
+  id: string;
   _id: string;
   subOrderId: string;
   parentOrderId: {
@@ -55,7 +56,7 @@ export default function VendorOrdersPage() {
       const res = await fetch("/api/orders");
       if (!res.ok) throw new Error("Failed to fetch sub-orders");
       const data = await res.json();
-      setSubOrders(data);
+      setSubOrders(data.map((o: any) => ({ ...o, id: o._id })));
     } catch (err: any) {
       toast.error(err.message || "Failed to load orders");
     } finally {

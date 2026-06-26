@@ -5,6 +5,7 @@ import Order from "@/lib/models/Order";
 import SubOrder from "@/lib/models/SubOrder";
 import VendorProfile from "@/lib/models/VendorProfile";
 import Settings from "@/lib/models/Settings";
+import Invoice from "@/lib/models/Invoice";
 import { auth } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import { formatINR, formatDate } from "@/lib/format";
@@ -91,24 +92,32 @@ export default async function InvoicePage({
   const sellerGstin = currentVendorProfile?.gstNumber || "";
   const sellerPan = currentVendorProfile?.panNumber || "";
 
+  // Query saved invoice document if viewing a sub-order
+  let dbInvoice: any = null;
+  if (currentSubOrder) {
+    dbInvoice = await Invoice.findOne({ subOrderId: currentSubOrder._id }).lean();
+  }
+
   // Determine items and invoice number
   const itemsToRender = currentSubOrder ? currentSubOrder.items : order.items;
-  const invoiceNumber = currentSubOrder
+  const invoiceNumber = dbInvoice
+    ? dbInvoice.invoiceNumber
+    : currentSubOrder
     ? `INV-SUB-${currentSubOrder.subOrderId}`
     : `INV-${order.orderId || order._id.toString().substring(0, 8).toUpperCase()}`;
 
   // Determine pricing calculations
-  const subtotal = currentSubOrder ? currentSubOrder.pricing.subtotal : order.pricing?.subtotal || 0;
+  const subtotal = dbInvoice ? dbInvoice.subTotal : currentSubOrder ? currentSubOrder.pricing.subtotal : order.pricing?.subtotal || 0;
   const shipping = currentSubOrder ? currentSubOrder.pricing.shippingCost : order.pricing?.shipping || 0;
   const discount = currentSubOrder ? currentSubOrder.pricing.couponDiscount : order.pricing?.couponDiscount || 0;
   const pointsDiscount = currentSubOrder ? currentSubOrder.pricing.pointsDiscount : order.pricing?.pointsDiscount || 0;
-  const total = currentSubOrder ? currentSubOrder.pricing.total : order.pricing?.total || 0;
+  const total = dbInvoice ? dbInvoice.totalAmount : currentSubOrder ? currentSubOrder.pricing.total : order.pricing?.total || 0;
 
   // CGST & SGST frozen calculation
-  const tax = currentSubOrder ? currentSubOrder.pricing.tax : order.pricing?.tax || 0;
+  const tax = dbInvoice ? dbInvoice.gstBreakdown.totalTax : currentSubOrder ? currentSubOrder.pricing.tax : order.pricing?.tax || 0;
   const invoiceTaxRate = currentSubOrder ? currentSubOrder.pricing.taxRate : order.pricing?.taxRate || 8;
-  const cgst = Math.round((tax / 2) * 100) / 100;
-  const sgst = tax - cgst;
+  const cgst = dbInvoice ? dbInvoice.gstBreakdown.cgst : Math.round((tax / 2) * 100) / 100;
+  const sgst = dbInvoice ? dbInvoice.gstBreakdown.sgst : tax - cgst;
 
   return (
     <div className="min-h-screen bg-neutral-50 py-10 print:bg-white print:py-0">

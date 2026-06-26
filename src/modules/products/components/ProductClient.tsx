@@ -457,6 +457,26 @@ export default function ProductClient({
             </button>
           </div>
 
+          {/* Compare Button */}
+          <div className="flex justify-end pt-1">
+            <button
+              onClick={() => {
+                router.push(`/shop/compare?slugs=${product.slug}`);
+              }}
+              className="text-xs font-bold text-primary hover:text-cognac transition flex items-center gap-1.5 ml-auto hover:underline cursor-pointer border-0 bg-transparent p-0"
+            >
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 3h5v5" />
+                <path d="M8 3H3v5" />
+                <path d="M21 3L14 10" />
+                <path d="M3 3l7 7" />
+                <path d="M14 14l7 7" />
+                <path d="M10 14L3 21" />
+              </svg>
+              <span>Compare with other products</span>
+            </button>
+          </div>
+
           {/* PIN Delivery Checker */}
           <div className="border-t border-border/60 pt-5 space-y-2.5">
             <h3 className="font-semibold text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">

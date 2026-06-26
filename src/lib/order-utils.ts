@@ -6,7 +6,11 @@ import LoyaltyPoints from "@/lib/models/LoyaltyPoints";
 import Payout from "@/lib/models/Payout";
 import Counter from "@/lib/models/Counter";
 import Order from "@/lib/models/Order";
+import Invoice from "@/lib/models/Invoice";
+import Notification from "@/lib/models/Notification";
+import Referral from "@/lib/models/Referral";
 import { releaseInventory } from "@/lib/inventory";
+import { creditUserWallet } from "@/lib/wallet";
 
 /**
  * Splits an amount proportionally based on subtotals.
@@ -146,6 +150,66 @@ export async function transitionSubOrderStatus(
 
     subOrder.payoutId = payoutDocs[0]._id;
     subOrder.payoutStatus = "PENDING";
+
+    // Process Referral Reward completion on first delivered sub-order for this customer
+    const completedOrdersCount = await SubOrder.countDocuments({
+      parentOrderId: { $in: await Order.find({ userId: parentOrder.userId }).select("_id") },
+      status: "DELIVERED",
+      _id: { $ne: subOrder._id }
+    }).session(sessionOptions.session || null);
+
+    if (completedOrdersCount === 0) {
+      const pendingReferral = await Referral.findOne({
+        referredUserId: parentOrder.userId,
+        status: "pending"
+      }).session(sessionOptions.session || null);
+
+      if (pendingReferral) {
+        pendingReferral.status = "completed";
+        pendingReferral.orderId = parentOrder._id;
+        await pendingReferral.save(sessionOptions);
+
+        // Credit both referrer and referred user's wallets using double-entry ledger helpers
+        await creditUserWallet(
+          pendingReferral.referrerId,
+          pendingReferral.reward,
+          `Referral reward for referring user ${parentOrder.shippingAddress.fullName || 'friend'}`,
+          "referral",
+          pendingReferral._id.toString(),
+          sessionOptions
+        );
+
+        await creditUserWallet(
+          parentOrder.userId,
+          pendingReferral.reward,
+          `Referral signup reward using code ${pendingReferral.code}`,
+          "referral",
+          pendingReferral._id.toString(),
+          sessionOptions
+        );
+
+        // Create Notifications
+        await Notification.create(
+          [
+            {
+              userId: pendingReferral.referrerId,
+              type: "wallet",
+              title: "Referral Reward Credited!",
+              message: `Congratulations! You received ₹${pendingReferral.reward} wallet credit as your friend placed their first order.`,
+              link: "/account/wallet",
+            },
+            {
+              userId: parentOrder.userId,
+              type: "wallet",
+              title: "Referral Bonus Credited!",
+              message: `Welcome! You received ₹${pendingReferral.reward} wallet credit bonus on your first delivery.`,
+              link: "/account/wallet",
+            }
+          ],
+          sessionOptions
+        );
+      }
+    }
   }
 
   // 3. Rollback side effects if transitioning away from DELIVERED to CANCELLED/RETURNED
@@ -190,6 +254,67 @@ export async function transitionSubOrderStatus(
         sessionOptions
       );
       subOrder.payoutStatus = "PENDING";
+    }
+  }
+
+  // 4. Generate Invoice when status transitions to CONFIRMED
+  if (nextStatus === "CONFIRMED" && currentStatus !== "CONFIRMED") {
+    const existingInvoice = await Invoice.findOne({ subOrderId: subOrder._id }).session(sessionOptions.session || null);
+    if (!existingInvoice) {
+      const counter = (await Counter.findOneAndUpdate(
+        { _id: "invoiceSeqId" },
+        { $inc: { seq: 1 } },
+        { upsert: true, new: true, ...sessionOptions }
+      )) as any;
+      const invoiceSeqNum = String(counter?.seq || 1).padStart(6, "0");
+      const invoiceNumber = `INV-SUB-${invoiceSeqNum}`;
+
+      const invoiceItems = subOrder.items.map((item: any) => {
+        const taxRate = subOrder.pricing.taxRate || 18;
+        const totalTax = Math.round((item.price * item.qty) * (taxRate / 100) * 100) / 100;
+        const cgstAmount = Math.round((totalTax / 2) * 100) / 100;
+        const sgstAmount = totalTax - cgstAmount;
+        return {
+          productId: item.productId,
+          name: item.name,
+          quantity: item.qty,
+          price: item.price,
+          hsnCode: "HSN-8517",
+          taxRate: taxRate,
+          cgstAmount: cgstAmount,
+          sgstAmount: sgstAmount,
+          igstAmount: 0,
+          totalTax: totalTax,
+          total: (item.price * item.qty) + totalTax,
+        };
+      });
+
+      const totalTax = subOrder.pricing.tax || 0;
+      const cgst = Math.round((totalTax / 2) * 100) / 100;
+      const sgst = totalTax - cgst;
+
+      const invoiceDocs = await Invoice.create(
+        [
+          {
+            orderId: subOrder.parentOrderId,
+            subOrderId: subOrder._id,
+            vendorId: subOrder.vendorId,
+            invoiceNumber: invoiceNumber,
+            gstBreakdown: {
+              cgst: cgst,
+              sgst: sgst,
+              igst: 0,
+              totalTax: totalTax,
+            },
+            items: invoiceItems,
+            subTotal: subOrder.pricing.subtotal,
+            totalAmount: subOrder.pricing.total,
+          },
+        ],
+        sessionOptions
+      );
+
+      subOrder.invoiceId = invoiceDocs[0]._id;
     }
   }
 

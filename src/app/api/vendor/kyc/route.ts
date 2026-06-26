@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import VendorProfile from '@/lib/models/VendorProfile';
 import KycDocument from '@/lib/models/KycDocument';
+import User from '@/lib/models/User';
 import { verifyGstin, verifyPan, verifyBankAccount } from '@/lib/kyc';
 
 export async function POST(request: Request) {
@@ -33,10 +34,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Vendor profile not found' }, { status: 404 });
     }
 
+    const dbUser = await User.findById(session.user.id);
+    const phone = dbUser?.phone || '9999999999';
+
     // Step 1: Run automated API verifications
     const gstinResult = await verifyGstin(gstin);
     const panResult = await verifyPan(pan, holderName);
-    const bankResult = await verifyBankAccount(accountNumber, ifscCode, session.user.phone || '9999999999', holderName);
+    const bankResult = await verifyBankAccount(accountNumber, ifscCode, phone, holderName);
 
     // Step 2: Delete old KYC documents for this vendor
     await KycDocument.deleteMany({ vendorId: session.user.id });

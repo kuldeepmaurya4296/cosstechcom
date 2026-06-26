@@ -7,7 +7,7 @@ import { formatINR } from "@/lib/format";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { Plus, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Plus, ArrowRight, ShieldCheck, Sparkles, Landmark } from "lucide-react";
 import { useSettings } from "@/lib/settings-context";
 
 // Shared and sub-components

@@ -4,6 +4,7 @@ import Dispute from "@/lib/models/Dispute";
 import User from "@/lib/models/User";
 import { auth } from "@/lib/auth";
 import { logAdminActivity } from "@/lib/activity-logger";
+import { creditUserWallet, debitUserWallet } from "@/lib/wallet";
 
 export async function GET() {
   try {
@@ -112,16 +113,24 @@ export async function PUT(request: Request) {
 
       // 1. Process customer wallet credit if chosen
       if (resolution.action === "REFUND_WALLET" && resolution.walletCredit > 0) {
-        await User.findByIdAndUpdate(disputeDoc.customerId, {
-          $inc: { walletBalance: Number(resolution.walletCredit) },
-        });
+        await creditUserWallet(
+          disputeDoc.customerId,
+          Number(resolution.walletCredit),
+          `Wallet refund credit for resolved dispute #${disputeId}`,
+          "refund",
+          disputeDoc._id.toString()
+        );
       }
 
       // 2. Process vendor penalty deduction if chosen
       if (resolution.vendorPenalty > 0 && disputeDoc.vendorId) {
-        await User.findByIdAndUpdate(disputeDoc.vendorId, {
-          $inc: { walletBalance: -Number(resolution.vendorPenalty) },
-        });
+        await debitUserWallet(
+          disputeDoc.vendorId,
+          Number(resolution.vendorPenalty),
+          `Vendor penalty deduction for resolved dispute #${disputeId}`,
+          "refund",
+          disputeDoc._id.toString()
+        );
       }
     } else {
       return NextResponse.json({ error: "Invalid dispute action" }, { status: 400 });

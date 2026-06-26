@@ -125,7 +125,7 @@ export default function AccountOverview() {
     completionPercentage += 25;
     checklist.push({ label: "Items saved in Wishlist", complete: true });
   } else {
-    checklist.push({ label: "Add shoes to wishlist", complete: false, href: "/shop" });
+    checklist.push({ label: "Add products to wishlist", complete: false, href: "/shop" });
   }
 
   // Find active orders (in flight)
@@ -389,7 +389,7 @@ export default function AccountOverview() {
             <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground/60" />
             <p className="text-sm font-semibold">You haven't placed any orders yet.</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Browse our collection to purchase shoes.
+              Browse our collection to purchase products.
             </p>
             <Link
               href="/shop"

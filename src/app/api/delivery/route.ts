@@ -56,6 +56,8 @@ export async function GET() {
   }
 }
 
+import redisClient from "@/lib/redis";
+
 export async function PUT(request: Request) {
   try {
     const session = await auth();
@@ -66,15 +68,28 @@ export async function PUT(request: Request) {
     await connectToDatabase();
 
     const body = await request.json();
-    const { id, action, status, note } = body;
+    const { id, action, status, note, deliveryOtp } = body;
 
     if (!id || !action) {
       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
     }
 
-    const subOrder = await SubOrder.findById(id);
+    const subOrder = await SubOrder.findById(id).populate("parentOrderId");
     if (!subOrder) {
       return NextResponse.json({ error: "Sub-order not found" }, { status: 404 });
+    }
+
+    if (action === "send_otp") {
+      // Generate a 6-digit random code
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpKey = `delivery_otp:${subOrder._id.toString()}`;
+      await redisClient.set(otpKey, otp, { ex: 3600 }); // Expires in 1 hour
+      
+      console.log(`[SMS / WHATSAPP DELIVERY OTP SIMULATION]`);
+      console.log(`OTP for delivery of sub-order ${subOrder.subOrderId} is: ${otp}`);
+      console.log(`-----------------------------------------`);
+
+      return NextResponse.json({ success: true, message: "Delivery OTP sent successfully (simulated)!" });
     }
 
     if (action === "claim") {
@@ -105,6 +120,26 @@ export async function PUT(request: Request) {
       // Check if this partner is authorized to update this order
       if (subOrder.shipping?.deliveryPartnerId?.toString() !== session.user.id && session.user.role !== "admin") {
         return NextResponse.json({ error: "Unauthorized to update this sub-order" }, { status: 403 });
+      }
+
+      // If status is DELIVERED and order is COD, verify OTP
+      const parentOrder = subOrder.parentOrderId as any;
+      const isCod = parentOrder?.payment?.method === "COD";
+
+      if (status === "DELIVERED" && isCod) {
+        if (!deliveryOtp) {
+          return NextResponse.json({ error: "Delivery verification OTP is required for COD orders." }, { status: 400 });
+        }
+
+        const otpKey = `delivery_otp:${subOrder._id.toString()}`;
+        const storedOtp = await redisClient.get(otpKey);
+
+        if (!storedOtp || storedOtp.trim() !== deliveryOtp.trim()) {
+          return NextResponse.json({ error: "Invalid or expired delivery verification OTP. Please try again." }, { status: 400 });
+        }
+
+        // Clean up OTP on success
+        await redisClient.del(otpKey);
       }
 
       const updated = await transitionSubOrderStatus(

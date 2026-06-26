@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { ReturnModal } from "./components/ReturnModal";
 import { CancelModal } from "./components/CancelModal";
+import { DisputeModal } from "./components/DisputeModal";
 
 const getTimelineSteps = (order: any): string[] => {
   const history = order.statusHistory || [];
@@ -97,6 +98,21 @@ export default function AccountOrdersPage() {
   const [returnModalDaysLeft, setReturnModalDaysLeft] = useState(0);
   const [cancelModalOrder, setCancelModalOrder] = useState<any>(null);
 
+  // Dispute states
+  const [disputes, setDisputes] = useState<any[]>([]);
+  const [disputeModalOrder, setDisputeModalOrder] = useState<any>(null);
+  const [disputeModalSubOrder, setDisputeModalSubOrder] = useState<any>(null);
+
+  const fetchDisputes = useCallback(() => {
+    if (!session?.user?.id) return;
+    fetch("/api/orders/dispute")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setDisputes(data);
+      })
+      .catch(console.error);
+  }, [session?.user?.id]);
+
   const fetchOrders = useCallback(() => {
     if (!session?.user?.id) return;
     fetch(`/api/orders?userId=${session.user.id}`)
@@ -110,7 +126,8 @@ export default function AccountOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-  }, [fetchOrders]);
+    fetchDisputes();
+  }, [fetchOrders, fetchDisputes]);
 
   const toggleExpand = (orderId: string) => {
     setExpandedOrders((prev) => ({
@@ -701,129 +718,90 @@ export default function AccountOrdersPage() {
 
                     {/* Timeline Expanded Tracking Details */}
                     {expandedOrders[o._id || o.id] && (
-                      <div className="bg-muted/20 border-t border-border/40 px-5 py-5 space-y-4">
-                        <div className="flex justify-between items-center border-b border-border/40 pb-2.5">
+                      <div className="bg-muted/20 border-t border-border/40 px-5 py-5 space-y-6">
+                        <div className="border-b border-border/40 pb-2.5">
                           <h4 className="text-[10px] uppercase font-bold tracking-wider text-cognac">
-                            Fulfillment Timeline
+                            Seller Packages & Fulfillment
                           </h4>
-                          {o.shipping?.courier && (
-                            <span className="text-[10px] font-bold text-muted-foreground">
-                              Courier:{" "}
-                              <strong className="text-foreground">
-                                {o.shipping.courier}
-                                {o.shipping.trackingNumber ? ` (${o.shipping.trackingNumber})` : ""}
-                              </strong>
-                            </span>
-                          )}
                         </div>
-
-                        {/* Track shipment — clickable courier tracking link */}
-                        {o.shipping?.trackingUrl && (
-                          <a
-                            href={o.shipping.trackingUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-[11px] font-bold text-primary-foreground shadow-sm transition-all hover:opacity-90"
-                          >
-                            <Truck className="h-3.5 w-3.5" />
-                            Track Shipment
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-
-                        <div className="relative border-l border-border/80 pl-6 ml-3 py-1 space-y-5">
-                          {(() => {
-                            const steps = getTimelineSteps(o);
-                            return steps.map((step: string, idx: number) => {
-                              const h = o.statusHistory?.find((x: any) => x.status === step);
-                              const isCompleted = !!h;
-                              const lastCompletedIdx = steps.reduce(
-                                (acc: number, s: string, i: number) =>
-                                  o.statusHistory?.some((x: any) => x.status === s) ? i : acc,
-                                0,
-                              );
-                              const isActive = idx === lastCompletedIdx;
-
+                        
+                        {o.subOrders && o.subOrders.length > 0 ? (
+                          <div className="space-y-4">
+                            {o.subOrders.map((so: any) => {
+                              const disp = disputes.find((d: any) => d.subOrderId === so._id.toString() || d.subOrderId === so.id);
+                              const canDispute = ["SHIPPED", "DELIVERED", "OUT_FOR_DELIVERY"].includes(so.status);
+                              
                               return (
-                                <div key={idx} className="relative">
-                                  {/* Node dot indicator */}
-                                  <span
-                                    className={`absolute -left-[32px] top-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold shadow-sm transition-all ${
-                                      isCompleted
-                                        ? isActive
-                                          ? "bg-primary text-primary-foreground ring-4 ring-primary/10"
-                                          : "bg-muted border border-border text-muted-foreground"
-                                        : "bg-background border border-border text-muted-foreground/30"
-                                    }`}
-                                  >
-                                    {isCompleted ? "✓" : idx + 1}
-                                  </span>
-
-                                  <div className={isCompleted ? "" : "opacity-40"}>
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      <p
-                                        className={`text-xs font-bold uppercase tracking-wider ${isCompleted ? "text-foreground" : "text-muted-foreground"}`}
-                                      >
-                                        {step.replace(/_/g, " ")}
-                                      </p>
-                                      {isActive && (
-                                        <span className="text-[8px] font-bold uppercase tracking-widest bg-primary/10 text-primary px-1.5 py-0.5 rounded-md">
-                                          Current Status
+                                <div key={so.id || so._id} className="bg-card border border-border/60 rounded-xl p-4.5 space-y-3">
+                                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-border/40 pb-2.5">
+                                    <div>
+                                      <span className="font-mono text-xs font-bold text-charcoal">Package Ref: {so.subOrderId}</span>
+                                      <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1.5">
+                                        <span>Status:</span> <StatusBadge status={so.status} />
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex gap-2 items-center flex-wrap">
+                                      {disp ? (
+                                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                                          disp.status === "RESOLVED" || disp.status === "CLOSED"
+                                            ? "bg-emerald-500/10 text-emerald-600 border border-emerald-100"
+                                            : "bg-amber-500/10 text-amber-600 border border-amber-100"
+                                        }`}>
+                                          Dispute: {disp.status}
                                         </span>
+                                      ) : canDispute ? (
+                                        <button
+                                          onClick={() => {
+                                            setDisputeModalOrder(o);
+                                            setDisputeModalSubOrder(so);
+                                          }}
+                                          className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 cursor-pointer transition"
+                                        >
+                                          Raise Dispute
+                                        </button>
+                                      ) : null}
+                                      
+                                      <Link
+                                        href={`/account/orders/${o._id || o.id}/invoice?subOrderId=${so.subOrderId}`}
+                                        target="_blank"
+                                        className="text-[10px] font-bold uppercase tracking-wider text-brass hover:text-brass/90 border border-brass/25 px-3 py-1.5 rounded-lg transition-all cursor-pointer bg-brass/5"
+                                      >
+                                        Seller Invoice
+                                      </Link>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Sub order items list */}
+                                  <div className="space-y-2">
+                                    {so.items.map((item: any, idx: number) => (
+                                      <div key={idx} className="flex gap-2.5 items-center text-xs">
+                                        <img src={item.image} alt={item.name} className="h-8 w-8 object-cover rounded-lg border border-border shrink-0" />
+                                        <div className="min-w-0 flex-1">
+                                          <p className="font-semibold text-charcoal truncate">{item.name}</p>
+                                          <p className="text-[10px] text-muted-foreground">Size: {item.size} | Color: {item.color} | Qty: {item.qty || item.quantity}</p>
+                                        </div>
+                                        <span className="font-bold text-charcoal">{formatINR(item.price * (item.qty || item.quantity))}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  
+                                  {/* Shipping Details */}
+                                  {so.shipping?.courier && (
+                                    <div className="text-[10px] text-muted-foreground bg-muted/40 p-2 rounded-lg border border-border/30 flex justify-between items-center flex-wrap gap-2">
+                                      <span>Courier: <strong>{so.shipping.courier}</strong> {so.shipping.trackingNumber ? `(AWB: ${so.shipping.trackingNumber})` : ""}</span>
+                                      {so.shipping.trackingUrl && (
+                                        <a href={so.shipping.trackingUrl} target="_blank" className="text-primary hover:underline font-bold">Track Shipment &rarr;</a>
                                       )}
                                     </div>
-
-                                    {isCompleted && h ? (
-                                      <div className="mt-1">
-                                        <p className="text-[10px] text-muted-foreground font-medium">
-                                          {new Date(h.timestamp).toLocaleString("en-IN", {
-                                            day: "numeric",
-                                            month: "short",
-                                            year: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                          })}
-                                        </p>
-                                        {h.note && (
-                                          <p className="text-xs text-muted-foreground mt-1.5 bg-background border border-border/40 p-2.5 rounded-lg leading-relaxed max-w-xl">
-                                            {h.note}
-                                          </p>
-                                        )}
-                                        {step === "REFUNDED" && o.refundDetails && (
-                                          <div className="text-xs mt-2 bg-primary/5 p-2.5 rounded-lg border border-primary/10 space-y-1 max-w-xl">
-                                            <p className="font-bold text-primary flex items-center gap-1.5">
-                                              <ShieldCheck className="h-3.5 w-3.5" />
-                                              <span>Refund Disbursed</span>
-                                            </p>
-                                            <p className="text-muted-foreground">
-                                              <span className="font-medium">Refund Mode:</span>{" "}
-                                              {o.refundDetails.method === "ONLINE"
-                                                ? "Razorpay Gateway / Original Payment Method"
-                                                : "Manual Transfer / Cash"}
-                                            </p>
-                                            {o.refundDetails.transactionId && (
-                                              <p className="text-muted-foreground">
-                                                <span className="font-medium">Txn Reference:</span>{" "}
-                                                <code className="bg-muted px-1.5 py-0.5 rounded text-[11px] select-all font-mono font-semibold">
-                                                  {o.refundDetails.transactionId}
-                                                </code>
-                                              </p>
-                                            )}
-                                          </div>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <p className="text-[10px] text-muted-foreground/60 mt-0.5 italic">
-                                        Awaiting this phase...
-                                      </p>
-                                    )}
-                                  </div>
+                                  )}
                                 </div>
                               );
-                            });
-                          })()}
-                        </div>
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-muted-foreground italic">No split vendor packages registered.</p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -852,6 +830,23 @@ export default function AccountOrdersPage() {
           onSuccess={() => {
             setCancelModalOrder(null);
             fetchOrders();
+          }}
+        />
+      )}
+
+      {/* Raise Dispute Modal */}
+      {disputeModalOrder && disputeModalSubOrder && (
+        <DisputeModal
+          order={disputeModalOrder}
+          subOrder={disputeModalSubOrder}
+          onClose={() => {
+            setDisputeModalOrder(null);
+            setDisputeModalSubOrder(null);
+          }}
+          onSuccess={() => {
+            setDisputeModalOrder(null);
+            setDisputeModalSubOrder(null);
+            fetchDisputes();
           }}
         />
       )}

@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { User, Package, Heart, MapPin, Settings, LogOut, ShieldCheck, Award } from "lucide-react";
+import { User, Package, Heart, MapPin, Settings, LogOut, ShieldCheck, Award, Wallet as WalletIcon, Gift } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 const items = [
   { href: "/account", label: "Overview", icon: User, exact: true },
   { href: "/account/orders", label: "Orders", icon: Package },
   { href: "/account/wishlist", label: "Wishlist", icon: Heart },
+  { href: "/account/wallet", label: "My Wallet", icon: WalletIcon },
   { href: "/account/loyalty", label: "Loyalty Points", icon: Award },
+  { href: "/account/referral", label: "Refer & Earn", icon: Gift },
   { href: "/account/addresses", label: "Addresses", icon: MapPin },
   { href: "/account/profile", label: "Profile Settings", icon: Settings },
 ];

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import User from "@/lib/models/User";
+import Referral from "@/lib/models/Referral";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
@@ -10,6 +11,7 @@ const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   phone: z.string().optional(),
+  referralCode: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -34,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: validation.error.errors[0].message }, { status: 400 });
     }
 
-    const { name, email, password, phone } = validation.data;
+    const { name, email, password, phone, referralCode } = validation.data;
 
     const db = await connectToDatabase();
     const normalizedEmail = email.toLowerCase().trim();
@@ -52,9 +54,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A user with this email already exists" }, { status: 409 });
     }
 
+    // Validate and find referrer if referralCode is provided
+    let referredBy: any = null;
+    let referrerDoc: any = null;
+    if (referralCode) {
+      referrerDoc = await User.findOne({ referralCode: referralCode.toUpperCase().trim() });
+      if (referrerDoc) {
+        referredBy = referrerDoc._id;
+      }
+    }
+
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Generate own custom unique referral code
+    const ownPrefix = name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, "USER");
+    const ownRandom = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const ownReferralCode = `COSS-${ownPrefix}-${ownRandom}`;
 
     // Create the user
     const newUser = await User.create({
@@ -66,7 +83,20 @@ export async function POST(request: Request) {
       isActive: true,
       isEmailVerified: false,
       addresses: [],
+      referralCode: ownReferralCode,
+      referredBy: referredBy || undefined,
     });
+
+    // Create a pending Referral record if valid referral was used
+    if (referrerDoc && referralCode) {
+      await Referral.create({
+        referrerId: referrerDoc._id,
+        referredUserId: newUser._id,
+        code: referralCode.toUpperCase().trim(),
+        reward: 100, // ₹100 reward
+        status: "pending",
+      });
+    }
 
     return NextResponse.json(
       {

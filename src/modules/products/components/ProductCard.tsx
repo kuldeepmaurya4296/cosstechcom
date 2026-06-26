@@ -67,6 +67,26 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             />
           </button>
 
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/shop/compare?slugs=${product.slug}`;
+            }}
+            className="absolute top-14 right-3 h-9 w-9 rounded-full bg-cream/90 backdrop-blur grid place-items-center hover:bg-cream transition z-10 cursor-pointer border-0"
+            aria-label="Compare"
+            title="Compare product"
+          >
+            <svg className="h-4 w-4 text-charcoal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 3h5v5" />
+              <path d="M8 3H3v5" />
+              <path d="M21 3L14 10" />
+              <path d="M3 3l7 7" />
+              <path d="M14 14l7 7" />
+              <path d="M10 14L3 21" />
+            </svg>
+          </button>
+
           {/* Add to Cart button overlay */}
           <div className="absolute inset-x-3 bottom-3 md:translate-y-12 md:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
             <button

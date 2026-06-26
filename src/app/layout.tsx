@@ -1,23 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import { Watermark } from "@/components/shared/Watermark";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-serif",
-  display: "swap",
-});
+const inter = { variable: "font-sans" };
+const poppins = { variable: "font-serif" };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cosstechcom.com"),

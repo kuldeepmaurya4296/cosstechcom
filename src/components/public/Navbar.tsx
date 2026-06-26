@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
+import { NotificationCenter } from "./NotificationCenter";
 
 const SearchModal = dynamic(() => import("./SearchModal").then((mod) => mod.SearchModal), {
   ssr: false,
@@ -369,6 +370,9 @@ export function Navbar() {
                 </span>
               )}
             </Link>
+
+            {/* Notification Center */}
+            <NotificationCenter />
 
             {/* User / Sign In */}
             {mounted && session ? (

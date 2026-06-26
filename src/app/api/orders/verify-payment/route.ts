@@ -102,6 +102,24 @@ export async function POST(request: Request) {
 
     await order.save();
 
+    // Fetch and transition all sub-orders to CONFIRMED
+    try {
+      const SubOrder = (await import("@/lib/models/SubOrder")).default;
+      const { transitionSubOrderStatus } = await import("@/lib/order-utils");
+      const subOrders = await SubOrder.find({ parentOrderId: order._id });
+      for (const so of subOrders) {
+        await transitionSubOrderStatus(
+          so._id,
+          "CONFIRMED",
+          {},
+          "system",
+          `Payment verified automatically. Transaction ID: ${razorpay_payment_id}`
+        );
+      }
+    } catch (subOrderErr) {
+      console.error("Failed to transition sub-orders on payment verification:", subOrderErr);
+    }
+
     // Commit inventory holds
     for (const item of order.items) {
       await commitInventory(item.productId, item.size, item.color, orderId);

@@ -106,7 +106,7 @@ export default function DeliveryPartnerPage() {
     }
   };
 
-  const handleUpdateStatus = async (subOrderId: string, status: "DELIVERED" | "CANCELLED") => {
+  const handleUpdateStatus = async (subOrderId: string, status: "DELIVERED" | "CANCELLED", otp?: string) => {
     try {
       setUpdatingId(subOrderId);
       const note = noteInput[subOrderId] || "";
@@ -118,6 +118,7 @@ export default function DeliveryPartnerPage() {
           action: "update_status",
           status,
           note: note || `Delivery updated to ${status} by partner.`,
+          deliveryOtp: otp,
         }),
       });
 
@@ -134,6 +135,28 @@ export default function DeliveryPartnerPage() {
       toast.error(err.message || "Failed to update package status.");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleSendOtp = async (subOrderId: string) => {
+    try {
+      const res = await fetch("/api/delivery", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: subOrderId,
+          action: "send_otp",
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to send OTP");
+      }
+
+      toast.success("Delivery verification OTP sent! Check console / server logs.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send delivery OTP.");
     }
   };
 
@@ -277,7 +300,8 @@ export default function DeliveryPartnerPage() {
                   isUpdating={updatingId === subOrder._id}
                   noteValue={noteInput[subOrder._id] || ""}
                   onNoteChange={(val) => setNoteInput((prev) => ({ ...prev, [subOrder._id]: val }))}
-                  onStatusUpdate={(status) => handleUpdateStatus(subOrder._id, status)}
+                  onStatusUpdate={(status, otp) => handleUpdateStatus(subOrder._id, status, otp)}
+                  onSendOtp={() => handleSendOtp(subOrder._id)}
                   type="active"
                 />
               ))
@@ -338,16 +362,19 @@ function DeliveryCard({
   onNoteChange,
   onStatusUpdate,
   onClaim,
+  onSendOtp,
   type,
 }: {
   subOrder: SubOrder;
   isUpdating?: boolean;
   noteValue?: string;
   onNoteChange?: (val: string) => void;
-  onStatusUpdate?: (status: "DELIVERED" | "CANCELLED") => void;
+  onStatusUpdate?: (status: "DELIVERED" | "CANCELLED", otp?: string) => void;
   onClaim?: () => void;
+  onSendOtp?: () => void;
   type: "active" | "unclaimed" | "completed";
 }) {
+  const [otpVal, setOtpVal] = useState("");
   const address = subOrder.parentOrder?.shippingAddress;
   const payment = subOrder.parentOrder?.payment;
   const isCod = payment?.method === "COD";
@@ -484,7 +511,34 @@ function DeliveryCard({
       )}
 
       {type === "active" && onStatusUpdate && onNoteChange && (
-        <div className="border-t border-border/50 pt-4 space-y-3">
+        <div className="border-t border-border/50 pt-4 space-y-4">
+          {/* COD collection notice & OTP fields */}
+          {isCod && (
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-800 block">COD SECURE VERIFICATION REQUIRED</span>
+                <p className="text-xs text-amber-700 font-medium mt-1">Collect cash: <strong className="text-red-700 font-bold font-serif text-sm">{formatINR(subOrder.pricing.total)}</strong> before OTP verify.</p>
+              </div>
+              <div className="flex gap-2 w-full sm:w-auto items-center">
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit OTP..."
+                  value={otpVal}
+                  onChange={(e) => setOtpVal(e.target.value)}
+                  className="bg-white border border-amber-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none w-32 font-bold tracking-widest text-center"
+                />
+                {onSendOtp && (
+                  <button
+                    onClick={onSendOtp}
+                    className="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-2 rounded-lg cursor-pointer transition whitespace-nowrap"
+                  >
+                    Send OTP
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-2 items-center">
             <input
               type="text"
@@ -502,8 +556,8 @@ function DeliveryCard({
                 Failed
               </button>
               <button
-                onClick={() => onStatusUpdate("DELIVERED")}
-                disabled={isUpdating}
+                onClick={() => onStatusUpdate("DELIVERED", isCod ? otpVal : undefined)}
+                disabled={isUpdating || (isCod && !otpVal.trim())}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer transition flex-1 sm:flex-none disabled:opacity-55"
               >
                 Delivered

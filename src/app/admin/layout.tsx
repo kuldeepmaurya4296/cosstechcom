@@ -21,6 +21,7 @@ const items = [
   { to: "/admin/customers", label: "Customers", icon: "Users" },
   { to: "/admin/reviews", label: "Reviews", icon: "MessageSquare" },
   { to: "/admin/vendors", label: "Vendors", icon: "Store" },
+  { to: "/admin/disputes", label: "Disputes Mediation", icon: "AlertTriangle" },
   { to: "/admin/reconciliation", label: "Reconciliation", icon: "Coins" },
   { to: "/admin/payouts", label: "Payouts", icon: "Wallet" },
   { to: "/admin/kyc", label: "KYC Verification", icon: "ShieldCheck" },
