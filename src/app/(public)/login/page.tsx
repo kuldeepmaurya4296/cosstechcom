@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { Logo } from "@/components/shared/Logo";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/account";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +21,6 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validations
     if (!email.trim() || !password) {
       toast.error("Email and password are required.");
       return;
@@ -34,7 +33,6 @@ function LoginForm() {
 
     setLoading(true);
     try {
-      // 1. Perform detailed server-side pre-login validations
       const checkRes = await fetch("/api/auth/login-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +47,6 @@ function LoginForm() {
         return;
       }
 
-      // 2. If validation succeeded, perform the actual NextAuth sign-in
       const res = await signIn("credentials", {
         email,
         password,
@@ -57,7 +54,7 @@ function LoginForm() {
       });
 
       if (res?.error) {
-        toast.error(res.error || "Invalid login credentials.");
+        toast.error(res.error || "Invalid credentials.");
       } else {
         toast.success("Signed in successfully!");
         router.push(callbackUrl);
@@ -75,13 +72,15 @@ function LoginForm() {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-24 max-w-md">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 max-w-md">
       <div className="text-center mb-8">
         <Logo size={56} />
       </div>
-      <div className="bg-card border border-border rounded-2xl p-8 shadow-card">
-        <h1 className="font-serif text-3xl font-bold text-center">Welcome back</h1>
+
+      <div className="bg-card border border-border/80 rounded-2xl p-8 shadow-lg backdrop-blur-md bg-white/70">
+        <h1 className="font-serif text-3xl font-bold text-center text-charcoal">Welcome back</h1>
         <p className="text-sm text-muted-foreground text-center mt-1">Sign in to your account</p>
+        
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -92,7 +91,7 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="aarav@example.com"
-              className="mt-1.5 w-full bg-background border border-input rounded-lg px-3 py-2.5 text-sm"
+              className="mt-1.5 w-full bg-background border border-input rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-200"
               required
             />
           </label>
@@ -114,7 +113,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-background border border-input rounded-lg pl-3 pr-10 py-2.5 text-sm"
+                className="w-full bg-background border border-input rounded-lg pl-3.5 pr-10 py-2.5 text-sm outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-200"
                 required
               />
               <button
@@ -126,28 +125,29 @@ function LoginForm() {
               </button>
             </div>
           </label>
+          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-primary-foreground rounded-full py-3 font-semibold text-sm cursor-pointer disabled:opacity-50"
+            className="w-full bg-primary text-primary-foreground rounded-full py-3.5 font-bold text-sm cursor-pointer disabled:opacity-50 hover:bg-primary/95 active:scale-98 transition shadow-md border border-primary/20"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="relative flex py-5 items-center">
           <div className="flex-grow border-t border-border"></div>
-          <span className="flex-shrink mx-4 text-muted-foreground text-xs uppercase tracking-wider">
-            Or
+          <span className="flex-shrink mx-4 text-muted-foreground text-xs uppercase tracking-wider font-semibold">
+            Or continue with
           </span>
           <div className="flex-grow border-t border-border"></div>
         </div>
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full bg-background border border-input text-foreground hover:bg-muted rounded-full py-3 font-semibold text-sm cursor-pointer flex items-center justify-center gap-2"
+          className="w-full bg-background border border-input text-foreground hover:bg-muted/80 rounded-full py-3.5 font-semibold text-sm cursor-pointer flex items-center justify-center gap-2.5 transition active:scale-98 shadow-sm"
         >
-          <svg className="h-4 w-4" viewBox="0 0 24 24">
+          <svg className="h-4.5 w-4.5" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -165,40 +165,68 @@ function LoginForm() {
               fill="#EA4335"
             />
           </svg>
-          Sign in with Google
+          Google
         </button>
 
-        <p className="text-xs text-center mt-5 text-muted-foreground">
+        <p className="text-xs text-center mt-6 text-muted-foreground">
           New here?{" "}
-          <Link href="/signup" className="text-primary font-semibold underline">
+          <Link href="/signup" className="text-primary font-bold hover:underline">
             Create an account
           </Link>
         </p>
-      </div>
-      <div className="mt-6 flex justify-center gap-4 text-xs">
-        <Link href="/account" className="underline">
-          Customer portal
-        </Link>
-        <Link href="/admin" className="underline">
-          Admin
-        </Link>
-        {/* <Link href="/vendor" className="underline">Vendor</Link> */}
+
+        {/* Switcher links */}
+        <div className="mt-8 pt-6 border-t border-border/80 flex flex-wrap justify-center gap-2.5 text-xs font-semibold text-muted-foreground">
+          <span>Access Other Portals:</span>
+          <Link href="/login/vendor" className="text-primary hover:underline">Merchant Portal</Link>
+          <span className="text-border">|</span>
+          <Link href="/login/delivery" className="text-primary hover:underline">Logistics Agent</Link>
+          <span className="text-border">|</span>
+          <Link href="/login/admin" className="text-primary hover:underline">Console Control</Link>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function LoginPage() {
-  const { status } = useSession();
+function LoginContent() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      const role = (session.user as any).role;
+      const vendorStatus = (session.user as any).vendorStatus;
+
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        if (role === "admin") router.push("/admin");
+        else if (role === "vendor") {
+          if (vendorStatus !== "approved") router.push("/vendor/pending");
+          else router.push("/vendor");
+        }
+        else if (role === "delivery_partner") router.push("/delivery");
+        else if (role === "support") router.push("/support");
+        else router.push("/account");
+      }
+    }
+  }, [status, session, router, callbackUrl]);
 
   if (status === "authenticated") {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <p className="mb-4">You are already logged in.</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto"></div>
       </div>
     );
   }
 
+  return <LoginForm />;
+}
+
+export default function LoginPage() {
   return (
     <Suspense
       fallback={
@@ -207,7 +235,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginForm />
+      <LoginContent />
     </Suspense>
   );
 }

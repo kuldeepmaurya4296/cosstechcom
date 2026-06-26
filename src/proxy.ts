@@ -54,13 +54,21 @@ export async function proxy(req: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
     }
-    if (role !== "vendor" && role !== "admin") {
+
+    const isRegisterPage = nextUrl.pathname === "/vendor/register";
+    const isPendingPage = nextUrl.pathname === "/vendor/pending";
+
+    // Customers can access register page to apply
+    if (role === "customer" && isRegisterPage) {
+      return NextResponse.next();
+    }
+
+    if (role !== "vendor" && role !== "admin" && !isRegisterPage) {
       return NextResponse.redirect(new URL("/", nextUrl));
     }
     
     // Vendor approval gating
     if (role === "vendor") {
-      const isPendingPage = nextUrl.pathname === "/vendor/pending";
       if (vendorStatus !== "approved" && !isPendingPage) {
         return NextResponse.redirect(new URL("/vendor/pending", nextUrl));
       }

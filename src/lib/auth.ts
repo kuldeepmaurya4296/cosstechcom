@@ -117,7 +117,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
-          subAdminPermissions: user.subAdminPermissions || [],
+          subAdminPermissions: [...(user.subAdminPermissions || [])],
           vendorStatus: user.vendorStatus || null,
         };
       },
@@ -194,7 +194,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
-          subAdminPermissions: user.subAdminPermissions || [],
+          subAdminPermissions: [...(user.subAdminPermissions || [])],
           vendorStatus: user.vendorStatus || null,
         };
       },
@@ -236,7 +236,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         token.id = dbUser._id.toString();
         token.role = dbUser.role || "customer";
-        token.subAdminPermissions = dbUser.subAdminPermissions || [];
+        token.subAdminPermissions = [...(dbUser.subAdminPermissions || [])];
         token.vendorStatus = dbUser.vendorStatus || null;
       }
       return token;
