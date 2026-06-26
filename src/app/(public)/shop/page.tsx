@@ -184,7 +184,16 @@ async function getShopDataImpl(filters: any) {
   if (category && category !== "all") {
     const categoryDoc = await Category.findOne({ slug: category });
     if (categoryDoc) {
-      query.category = categoryDoc._id;
+      const descendantIds = [categoryDoc._id];
+      let currentParentIds = [categoryDoc._id];
+      while (currentParentIds.length > 0) {
+        const children = await Category.find({ parentId: { $in: currentParentIds } }).select("_id").lean();
+        if (children.length === 0) break;
+        const childrenIds = children.map((c: any) => c._id);
+        descendantIds.push(...childrenIds);
+        currentParentIds = childrenIds;
+      }
+      query.category = { $in: descendantIds };
     } else {
       query.category = new mongoose.Types.ObjectId(); // force empty results
     }

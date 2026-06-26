@@ -127,6 +127,14 @@ export function FilterSidebar({
     availability: false,
   });
 
+  const level1Categories = React.useMemo(() => {
+    return categories.filter((c) => c.level === 1 || !c.parentId);
+  }, [categories]);
+
+  const isCategorySelected = (slug: string) => {
+    return activeCategory === slug || activeCategory.startsWith(slug + "-");
+  };
+
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -187,8 +195,8 @@ export function FilterSidebar({
                 onToggle={() => toggleSection("category")}
               >
                 <div className="flex flex-col gap-1.5">
-                  {categories.map((c) => {
-                    const isSelected = activeCategory === c.slug;
+                  {level1Categories.map((c) => {
+                    const isSelected = isCategorySelected(c.slug);
                     return (
                       <button
                         key={c.id || c._id}

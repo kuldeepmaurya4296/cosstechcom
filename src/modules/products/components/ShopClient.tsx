@@ -106,6 +106,16 @@ export default function ShopClient({
       : [];
   }, [activeVendor]);
 
+  // Filter for Level 1 categories
+  const level1Categories = useMemo(() => {
+    return categories.filter((c) => c.level === 1 || !c.parentId);
+  }, [categories]);
+
+  // Check if a category is selected (including if a subcategory of it is selected)
+  const isCategorySelected = (slug: string) => {
+    return activeCategory === slug || activeCategory.startsWith(slug + "-");
+  };
+
   // Local state for price inputs
   const [minInput, setMinInput] = useState(activeMinPrice);
   const [maxInput, setMaxInput] = useState(activeMaxPrice);
@@ -381,19 +391,22 @@ export default function ShopClient({
           >
             All Styles
           </button>
-          {categories.map((c) => (
-            <button
-              key={c.id || c._id}
-              onClick={() => updateFilters({ category: c.slug })}
-              className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
-                activeCategory === c.slug
-                  ? "bg-charcoal text-cream shadow-md scale-102"
-                  : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
-              }`}
-            >
-              {c.name}
-            </button>
-          ))}
+          {level1Categories.map((c) => {
+            const isSelected = isCategorySelected(c.slug);
+            return (
+              <button
+                key={c.id || c._id}
+                onClick={() => updateFilters({ category: c.slug })}
+                className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
+                  isSelected
+                    ? "bg-charcoal text-cream shadow-md scale-102"
+                    : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
+                }`}
+              >
+                {c.name}
+              </button>
+            );
+          })}
         </div>
 
         {/* Sort & Filter Drawer toggle */}
