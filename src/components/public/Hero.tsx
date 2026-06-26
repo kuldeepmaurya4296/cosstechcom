@@ -117,18 +117,10 @@ export function Hero({ initialBanners }: { initialBanners?: any[] }) {
       ...b,
       image: img,
       href: b.linkUrl || b.href || "/shop",
-      cta:
-        b.cta ||
-        (idx === 1
-          ? "Explore Wedding collection"
-          : idx === 2
-            ? "Shop Top Brands"
-            : idx === 3
-              ? "Shop Women Collection"
-              : "Shop the collection"),
-      tagline: b.tagline || fallbacks[idx % fallbacks.length].tagline,
-      badgeTitle: b.badgeTitle || fallbacks[idx % fallbacks.length].badgeTitle,
-      badgePrice: b.badgePrice || fallbacks[idx % fallbacks.length].badgePrice,
+      cta: b.cta || "Shop Collection",
+      tagline: b.tagline || "New Arrival",
+      badgeTitle: b.badgeTitle || b.title || "Featured Style",
+      badgePrice: b.badgePrice || "View Details",
       objectPosition: b.objectPosition || "object-center",
     };
   });
@@ -175,7 +167,6 @@ export function Hero({ initialBanners }: { initialBanners?: any[] }) {
                   <span className="inline-block text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-cognac font-extrabold border border-brass/35 rounded-full px-3 py-1 bg-cream/80 backdrop-blur-xs shadow-2xs">
                     {active.tagline}
                   </span>
-                  <span>Test Version 2 via github</span>
                   <h1 className="font-serif text-[32px] leading-[1.1] md:text-6xl md:leading-[0.98] font-bold text-charcoal text-balance">
                     {active.title}
                   </h1>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, ShoppingBag, User, Heart, Menu } from "lucide-react";
+import { Search, ShoppingBag, User, Heart, Menu, ChevronDown, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useCart } from "@/lib/cart-store";
 import { Logo } from "@/components/shared/Logo";
@@ -48,6 +48,7 @@ export function Navbar() {
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
   const [categoryTree, setCategoryTree] = useState<any[]>([]);
   const [activeMega, setActiveMega] = useState<string | null>(null);
+  const [activeMoreSub, setActiveMoreSub] = useState<string | null>(null);
 
   // Search modal state (for mobile)
   const [searchOpen, setSearchOpen] = useState(false);
@@ -223,7 +224,9 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4 relative">
+        <div className={`container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 relative transition-all duration-300 ${
+          scrolled ? "h-14 md:h-16" : "h-16 md:h-20"
+        }`}>
           {/* Mobile menu toggle */}
           <button
             className="xl:hidden p-2 -ml-2 hover:bg-muted rounded-xl transition cursor-pointer"
@@ -247,55 +250,138 @@ export function Navbar() {
               Shop All
             </Link>
 
-            {categoryTree.map((lvl1) => {
-              const isActive = searchParams.get("category") === lvl1.slug;
-              return (
-                <div
-                  key={lvl1.id}
-                  className="relative py-2"
-                  onMouseEnter={() => setActiveMega(lvl1.id)}
-                  onMouseLeave={() => setActiveMega(null)}
-                >
-                  <button
-                    className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 whitespace-nowrap ${isActive
-                        ? "border-primary text-primary"
-                        : "border-transparent text-foreground/75 hover:border-primary/40"
-                      }`}
-                  >
-                    {lvl1.name}
-                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeMega === lvl1.id ? "rotate-180" : ""}`} />
-                  </button>
+            {(() => {
+              const preferredSlugs = ["fashion", "electronics", "grocery", "home-furniture"];
+              const mainCategories = categoryTree.filter((cat) => preferredSlugs.includes(cat.slug));
+              mainCategories.sort((a, b) => preferredSlugs.indexOf(a.slug) - preferredSlugs.indexOf(b.slug));
+              const otherCategories = categoryTree.filter((cat) => !preferredSlugs.includes(cat.slug));
 
-                  {/* Mega Menu Dropdown */}
-                  {activeMega === lvl1.id && lvl1.children && lvl1.children.length > 0 && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[600px] bg-card border border-border shadow-2xl rounded-2xl p-6 z-50 grid grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
-                      {lvl1.children.map((lvl2: any) => (
-                        <div key={lvl2.id} className="space-y-2">
-                          <Link
-                            href={`/shop?category=${lvl2.slug}`}
-                            className="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline block"
-                          >
-                            {lvl2.name}
-                          </Link>
-                          <ul className="space-y-1.5">
-                            {lvl2.children.map((lvl3: any) => (
-                              <li key={lvl3.id}>
+              return (
+                <>
+                  {mainCategories.map((lvl1) => {
+                    const isActive = searchParams.get("category") === lvl1.slug;
+                    return (
+                      <div
+                        key={lvl1.id}
+                        className="relative py-2"
+                        onMouseEnter={() => setActiveMega(lvl1.id)}
+                        onMouseLeave={() => setActiveMega(null)}
+                      >
+                        <button
+                          className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 whitespace-nowrap ${isActive
+                              ? "border-primary text-primary"
+                              : "border-transparent text-foreground/75 hover:border-primary/40"
+                            }`}
+                        >
+                          {lvl1.name}
+                          <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeMega === lvl1.id ? "rotate-180" : ""}`} />
+                        </button>
+
+                        {/* Mega Menu Dropdown */}
+                        {activeMega === lvl1.id && lvl1.children && lvl1.children.length > 0 && (
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 w-[600px] bg-card border border-border shadow-2xl rounded-2xl p-6 z-50 grid grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                            {lvl1.children.map((lvl2: any) => (
+                              <div key={lvl2.id} className="space-y-2">
                                 <Link
-                                  href={`/shop?category=${lvl3.slug}`}
-                                  className="text-xs text-muted-foreground hover:text-foreground transition-colors block"
+                                  href={`/shop?category=${lvl2.slug}`}
+                                  className="font-bold text-[11px] uppercase tracking-wider text-primary hover:underline block"
                                 >
-                                  {lvl3.name}
+                                  {lvl2.name}
                                 </Link>
-                              </li>
+                                <ul className="space-y-1.5">
+                                  {lvl2.children.map((lvl3: any) => (
+                                    <li key={lvl3.id}>
+                                      <Link
+                                        href={`/shop?category=${lvl3.slug}`}
+                                        className="text-xs text-muted-foreground hover:text-foreground transition-colors block"
+                                      >
+                                        {lvl3.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
                             ))}
-                          </ul>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* More Categories Dropdown */}
+                  {otherCategories.length > 0 && (
+                    <div
+                      className="relative py-2"
+                      onMouseEnter={() => setActiveMega("more")}
+                      onMouseLeave={() => {
+                        setActiveMega(null);
+                        setActiveMoreSub(null);
+                      }}
+                    >
+                      <button
+                        className={`text-xs font-bold hover:text-primary transition-colors uppercase tracking-[0.15em] flex items-center gap-1 cursor-pointer pb-1 border-b-2 whitespace-nowrap border-transparent text-foreground/75 hover:border-primary/40`}
+                      >
+                        More
+                        <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${activeMega === "more" ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {activeMega === "more" && (
+                        <div className="absolute top-full left-0 w-[240px] bg-card border border-border shadow-2xl rounded-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col gap-1">
+                          {otherCategories.map((lvl1) => (
+                            <div
+                              key={lvl1.id}
+                              className="relative"
+                              onMouseEnter={() => setActiveMoreSub(lvl1.id)}
+                            >
+                              <div
+                                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-foreground/80 hover:text-primary hover:bg-muted/80 transition cursor-pointer ${
+                                  activeMoreSub === lvl1.id ? "bg-muted/80 text-primary" : ""
+                                }`}
+                              >
+                                <Link href={`/shop?category=${lvl1.slug}`} className="flex-1">
+                                  {lvl1.name}
+                                </Link>
+                                {lvl1.children && lvl1.children.length > 0 && (
+                                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                                )}
+                              </div>
+
+                              {/* Flyout Sub-menu */}
+                              {activeMoreSub === lvl1.id && lvl1.children && lvl1.children.length > 0 && (
+                                <div className="absolute top-0 left-full ml-2 w-[480px] bg-card border border-border shadow-2xl rounded-2xl p-5 z-50 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-left-2 duration-200">
+                                  {lvl1.children.map((lvl2: any) => (
+                                    <div key={lvl2.id} className="space-y-1.5">
+                                      <Link
+                                        href={`/shop?category=${lvl2.slug}`}
+                                        className="font-bold text-[10px] uppercase tracking-wider text-primary hover:underline block"
+                                      >
+                                        {lvl2.name}
+                                      </Link>
+                                      <ul className="space-y-1">
+                                        {lvl2.children.map((lvl3: any) => (
+                                          <li key={lvl3.id}>
+                                            <Link
+                                              href={`/shop?category=${lvl3.slug}`}
+                                              className="text-[11px] text-muted-foreground hover:text-foreground transition-colors block"
+                                            >
+                                              {lvl3.name}
+                                            </Link>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
-                </div>
+                </>
               );
-            })}
+            })()}
           </nav>
 
           {/* Inline Autocomplete Search (Desktop only) */}
@@ -436,5 +522,3 @@ export function Navbar() {
     </>
   );
 }
-
-import { ChevronDown } from "lucide-react";

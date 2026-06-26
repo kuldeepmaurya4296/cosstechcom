@@ -1109,6 +1109,11 @@ async function seed() {
         linkUrl: "/shop?category=electronics",
         order: 1,
         isActive: true,
+        tagline: "Mega Tech Deals",
+        cta: "Shop Electronics",
+        badgeTitle: "Mobiles & Laptops",
+        badgePrice: "Up to 40% Off",
+        objectPosition: "object-center",
       },
       {
         title: "Designer Sarees & Ethnic Styles",
@@ -1117,6 +1122,11 @@ async function seed() {
         linkUrl: "/shop?category=fashion-womens-wear-sarees",
         order: 2,
         isActive: true,
+        tagline: "Atelier Festive Wear",
+        cta: "Shop Sarees",
+        badgeTitle: "Banarasi Silk Saree",
+        badgePrice: "From ₹38,000",
+        objectPosition: "object-center",
       },
       {
         title: "Groceries Delivered in Hours",
@@ -1125,6 +1135,11 @@ async function seed() {
         linkUrl: "/shop?category=grocery",
         order: 3,
         isActive: true,
+        tagline: "Supermarket Staples",
+        cta: "Order Groceries",
+        badgeTitle: "Staples & Tea Blend",
+        badgePrice: "Flat 10% Cashback",
+        objectPosition: "object-center",
       },
     ]);
 

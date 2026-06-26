@@ -18,7 +18,7 @@ export function CategoryGrid() {
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/categories")
+    fetch("/api/categories?level=1&hasProducts=true")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -58,7 +58,7 @@ export function CategoryGrid() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
+              transition={{ duration: 0.4, delay: (i % 5) * 0.03 }}
             >
               <Link href={`/shop?category=${c.slug}`} className="block group cursor-pointer">
                 <div className="aspect-[4/5] md:aspect-[3/4] rounded-xl bg-gradient-to-br from-muted via-secondary to-cream relative overflow-hidden border border-border group-hover:shadow-lg transition-all duration-300">

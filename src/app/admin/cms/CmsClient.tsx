@@ -140,6 +140,11 @@ function BannersTab({ banners }: { banners: any[] }) {
     linkUrl: "",
     order: 0,
     isActive: true,
+    tagline: "",
+    cta: "",
+    badgeTitle: "",
+    badgePrice: "",
+    objectPosition: "object-center",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -245,6 +250,69 @@ function BannersTab({ banners }: { banners: any[] }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <label className="block text-sm font-medium mb-1">Tagline</label>
+              <input
+                type="text"
+                value={formData.tagline || ""}
+                onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                className="w-full p-2 border border-border rounded bg-background"
+                placeholder="e.g. Mega Tech Deals"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">CTA Button Text</label>
+              <input
+                type="text"
+                value={formData.cta || ""}
+                onChange={(e) => setFormData({ ...formData, cta: e.target.value })}
+                className="w-full p-2 border border-border rounded bg-background"
+                placeholder="e.g. Shop Electronics"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Badge Title</label>
+              <input
+                type="text"
+                value={formData.badgeTitle || ""}
+                onChange={(e) => setFormData({ ...formData, badgeTitle: e.target.value })}
+                className="w-full p-2 border border-border rounded bg-background"
+                placeholder="e.g. Mobiles & Laptops"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Badge Price/Promo Text</label>
+              <input
+                type="text"
+                value={formData.badgePrice || ""}
+                onChange={(e) => setFormData({ ...formData, badgePrice: e.target.value })}
+                className="w-full p-2 border border-border rounded bg-background"
+                placeholder="e.g. Up to 40% Off"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Image Fit Position</label>
+              <select
+                value={formData.objectPosition || "object-center"}
+                onChange={(e) => setFormData({ ...formData, objectPosition: e.target.value })}
+                className="w-full p-2 border border-border rounded bg-background"
+              >
+                <option value="object-center">Center</option>
+                <option value="object-top">Top</option>
+                <option value="object-bottom">Bottom</option>
+                <option value="object-left">Left</option>
+                <option value="object-right">Right</option>
+              </select>
+            </div>
+            <div>
+              {/* Empty placeholder to balance grid */}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <label className="block text-sm font-medium mb-1">Link URL</label>
               <input
                 type="text"
@@ -306,6 +374,11 @@ function BannersTab({ banners }: { banners: any[] }) {
               linkUrl: "",
               order: 0,
               isActive: true,
+              tagline: "",
+              cta: "",
+              badgeTitle: "",
+              badgePrice: "",
+              objectPosition: "object-center",
             });
             setShowForm(true);
           }}
