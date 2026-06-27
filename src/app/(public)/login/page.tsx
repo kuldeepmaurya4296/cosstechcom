@@ -79,7 +79,7 @@ function LoginForm() {
 
       <div className="bg-card border border-border/80 rounded-2xl p-8 shadow-lg backdrop-blur-md bg-white/70">
         <h1 className="font-serif text-3xl font-bold text-center text-charcoal">Welcome back</h1>
-        <p className="text-sm text-muted-foreground text-center mt-1">Sign in to your account</p>
+        <p className="text-sm text-muted-foreground text-center mt-1">Login to your account</p>
         
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
@@ -131,14 +131,14 @@ function LoginForm() {
             disabled={loading}
             className="w-full bg-primary text-primary-foreground rounded-full py-3.5 font-bold text-sm cursor-pointer disabled:opacity-50 hover:bg-primary/95 active:scale-98 transition shadow-md border border-primary/20"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <div className="relative flex py-5 items-center">
           <div className="flex-grow border-t border-border"></div>
           <span className="flex-shrink mx-4 text-muted-foreground text-xs uppercase tracking-wider font-semibold">
-            Or continue with
+            Or login with
           </span>
           <div className="flex-grow border-t border-border"></div>
         </div>
@@ -171,18 +171,18 @@ function LoginForm() {
         <p className="text-xs text-center mt-6 text-muted-foreground">
           New here?{" "}
           <Link href="/signup" className="text-primary font-bold hover:underline">
-            Create an account
+            Register
           </Link>
         </p>
 
         {/* Switcher links */}
         <div className="mt-8 pt-6 border-t border-border/80 flex flex-wrap justify-center gap-2.5 text-xs font-semibold text-muted-foreground">
-          <span>Access Other Portals:</span>
-          <Link href="/login/vendor" className="text-primary hover:underline">Merchant Portal</Link>
+          <span>Other Login Options:</span>
+          <Link href="/login/vendor" className="text-primary hover:underline">Seller Login</Link>
           <span className="text-border">|</span>
-          <Link href="/login/delivery" className="text-primary hover:underline">Logistics Agent</Link>
+          <Link href="/login/delivery" className="text-primary hover:underline">Delivery Partner Login</Link>
           <span className="text-border">|</span>
-          <Link href="/login/admin" className="text-primary hover:underline">Console Control</Link>
+          <Link href="/login/admin" className="text-primary hover:underline">Admin Login</Link>
         </div>
       </div>
     </div>

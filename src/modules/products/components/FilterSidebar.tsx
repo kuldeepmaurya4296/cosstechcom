@@ -175,7 +175,7 @@ export function FilterSidebar({
             <div className="flex items-center justify-between border-b border-border/40 pb-4 mb-4">
               <span className="font-serif font-bold text-lg text-charcoal flex items-center gap-2">
                 <SlidersHorizontal className="h-4.5 w-4.5 text-cognac" />
-                <span>Filter Catalog</span>
+                <span>Filter Products</span>
               </span>
               <button
                 onClick={onClose}

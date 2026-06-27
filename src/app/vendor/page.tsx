@@ -113,7 +113,7 @@ export default function VendorPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Earnings" value={formatINR(revenue)} icon={IndianRupee} tint="primary" />
         <StatCard
-          label="Catalog Products"
+          label="Total Products"
           value={formatNumber(productsCount)}
           icon={Package}
           tint="accent"

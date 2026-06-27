@@ -236,7 +236,7 @@ export default async function Home() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-[11px] uppercase tracking-[0.3em] text-cognac font-semibold mb-2">
-              The Atelier
+              Designer Studio
             </p>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-charcoal">Bestsellers</h2>
           </div>
@@ -272,7 +272,7 @@ export default async function Home() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-[11px] uppercase tracking-[0.3em] text-cognac font-semibold mb-2">
-              Fresh from the bench
+              New Arrivals
             </p>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-charcoal">
               New arrivals

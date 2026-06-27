@@ -24,7 +24,7 @@ export default async function EditBrandPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <DashboardPage eyebrow="Catalog" title="Edit Brand">
+    <DashboardPage eyebrow="Inventory" title="Edit Brand">
       <div className="py-6">
         <BrandForm initialData={initialData} id={id} />
       </div>

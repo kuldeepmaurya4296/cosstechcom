@@ -55,7 +55,7 @@ export default async function AdminKycPage() {
   });
 
   return (
-    <DashboardPage eyebrow="Verification" title="Vendor KYC Queue">
+    <DashboardPage eyebrow="Seller Verification" title="Seller KYC Verification">
       <KycClient initialDocuments={documents} />
     </DashboardPage>
   );

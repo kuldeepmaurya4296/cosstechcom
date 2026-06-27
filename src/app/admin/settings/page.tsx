@@ -142,7 +142,7 @@ export default function AdminSettingsPage() {
 
   if (settingsLoading && localStoreName === "") {
     return (
-      <DashboardPage eyebrow="Configuration" title="Settings">
+      <DashboardPage eyebrow="Settings" title="Website Configurations">
         <div className="flex items-center justify-center min-h-[300px]">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
         </div>
@@ -151,7 +151,7 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <DashboardPage eyebrow="Configuration" title="Settings">
+    <DashboardPage eyebrow="Settings" title="Website Configurations">
       <div className="max-w-4xl space-y-6">
         {/* Modern Tabs Navigation */}
         <div className="flex border-b border-border gap-2 pb-px">

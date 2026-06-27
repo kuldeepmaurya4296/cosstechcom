@@ -21,11 +21,11 @@ const items = [
   { to: "/admin/customers", label: "Customers", icon: "Users" },
   { to: "/admin/reviews", label: "Reviews", icon: "MessageSquare" },
   { to: "/admin/vendors", label: "Vendors", icon: "Store" },
-  { to: "/admin/disputes", label: "Disputes Mediation", icon: "AlertTriangle" },
-  { to: "/admin/reconciliation", label: "Reconciliation", icon: "Coins" },
+  { to: "/admin/disputes", label: "Customer Complaints", icon: "AlertTriangle" },
+  { to: "/admin/reconciliation", label: "Payment Settlements", icon: "Coins" },
   { to: "/admin/payouts", label: "Payouts", icon: "Wallet" },
-  { to: "/admin/kyc", label: "KYC Verification", icon: "ShieldCheck" },
-  { to: "/admin/cms", label: "Website CMS", icon: "Globe" },
+  { to: "/admin/kyc", label: "Seller Verification (KYC)", icon: "ShieldCheck" },
+  { to: "/admin/cms", label: "Website Content (CMS)", icon: "Globe" },
   { to: "/admin/settings", label: "Settings", icon: "Settings" },
 ];
 

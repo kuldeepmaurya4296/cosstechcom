@@ -83,7 +83,7 @@ export function OccasionGrid({ occasions }: OccasionGridProps) {
           Collections
         </p>
         <h2 className="font-serif text-3xl md:text-5xl font-bold text-charcoal">
-          Curated By Occasion
+          Shop by Occasion
         </h2>
         <p className="text-sm text-muted-foreground mt-2">
           Footwear designed specifically for special Indian wedding events, corporate environments,
@@ -154,7 +154,7 @@ export function EditorialBanner({ newest }: EditorialBannerProps) {
           <h3 className="font-serif text-3xl md:text-5xl font-bold leading-tight">
             Quality products
             <br />
-            <em className="text-brass not-italic">for all demographics.</em>
+            <em className="text-brass not-italic">for everyone.</em>
           </h3>
           <p className="mt-5 text-cream/70 text-sm leading-relaxed max-w-md">
             CosstechCom is a premium multi-vendor marketplace connecting you directly with top
@@ -165,7 +165,7 @@ export function EditorialBanner({ newest }: EditorialBannerProps) {
             href="/shop"
             className="mt-7 inline-flex items-center gap-2 bg-cream text-charcoal px-6 py-3.5 rounded-full text-xs font-bold hover:bg-cream/90 transition"
           >
-            Explore Catalog <ArrowRight className="h-3.5 w-3.5" />
+            Explore All Products <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
         <div className="relative grid grid-cols-2 gap-3">

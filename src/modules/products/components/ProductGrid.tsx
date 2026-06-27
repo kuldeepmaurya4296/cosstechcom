@@ -29,7 +29,7 @@ export function ProductGrid({
           No Matching Products Found
         </h3>
         <p className="text-sm text-muted-foreground max-w-sm mb-6">
-          We couldn't find any products in our current catalog matching your filters. Try clearing
+          We couldn't find any products matching your filters. Try clearing
           some filters or searching for something else.
         </p>
         <button

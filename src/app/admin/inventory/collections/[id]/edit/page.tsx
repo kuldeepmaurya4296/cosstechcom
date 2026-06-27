@@ -51,7 +51,7 @@ export default async function EditCollectionPage({ params }: { params: Promise<{
   };
 
   return (
-    <DashboardPage eyebrow="Catalog" title="Edit Collection">
+    <DashboardPage eyebrow="Inventory" title="Edit Collection">
       <div className="py-6">
         <CollectionForm initialData={initialData} id={id} productsList={productsList} />
       </div>

@@ -70,7 +70,7 @@ function VendorLoginForm() {
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to Portals</span>
+          <span>Back to Login Options</span>
         </Link>
       </div>
 
@@ -86,7 +86,7 @@ function VendorLoginForm() {
               Grow your shoe business online with CosstechCom
             </h2>
             <p className="text-cream/80 text-sm mt-4 leading-relaxed">
-              Access millions of verified customers across India. Leverage our logistics network, automated tax calculations, and fast settlement cycles.
+              Access millions of verified customers across India. Leverage our delivery network, automated tax calculations, and fast payment settlement cycles.
             </p>
           </div>
 
@@ -117,7 +117,7 @@ function VendorLoginForm() {
               </div>
               <div>
                 <h4 className="font-serif font-bold text-sm text-cream">Secure Merchant Shield</h4>
-                <p className="text-xs text-cream/70 mt-1">Strict logistics mediation and prompt payout settlements with complete security.</p>
+                <p className="text-xs text-cream/70 mt-1">Strict delivery support and prompt payout settlements with complete security.</p>
               </div>
             </div>
           </div>
@@ -127,15 +127,15 @@ function VendorLoginForm() {
         <div className="lg:col-span-6 bg-card border border-border/80 rounded-3xl p-8 md:p-12 shadow-lg flex flex-col justify-center bg-white/70 backdrop-blur-md">
           <div className="flex items-center gap-2 mb-2 text-primary font-bold">
             <Store className="h-5 w-5 text-cognac" />
-            <span className="text-xs uppercase tracking-widest text-cognac">Merchant Portal</span>
+            <span className="text-xs uppercase tracking-widest">Seller Login</span>
           </div>
-          <h1 className="font-serif text-3xl font-bold text-charcoal">Seller Sign In</h1>
+          <h1 className="font-serif text-3xl font-bold text-charcoal">Seller Login</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage your shop, listings, and customer orders</p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <label className="block">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Merchant Email
+                Seller Email
               </span>
               <input
                 type="email"

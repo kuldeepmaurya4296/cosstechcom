@@ -67,7 +67,7 @@ export default function SignupPage() {
         <Logo size={56} />
       </div>
       <div className="bg-card border border-border rounded-2xl p-8 shadow-card">
-        <h1 className="font-serif text-3xl font-bold text-center">Join the house</h1>
+        <h1 className="font-serif text-3xl font-bold text-center">Create Account</h1>
         <p className="text-sm text-muted-foreground text-center mt-1">Create your account</p>
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
@@ -123,13 +123,13 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full bg-primary text-primary-foreground rounded-full py-3 font-semibold text-sm cursor-pointer disabled:opacity-50"
           >
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? "Creating account..." : "Register"}
           </button>
         </form>
         <p className="text-xs text-center mt-5 text-muted-foreground">
-          Already a member?{" "}
+          Already have an account?{" "}
           <Link href="/login" className="text-primary font-semibold underline">
-            Sign in
+            Login
           </Link>
         </p>
       </div>

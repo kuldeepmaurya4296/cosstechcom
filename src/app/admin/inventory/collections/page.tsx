@@ -49,7 +49,7 @@ export default async function AdminCollectionsPage({
   }));
 
   return (
-    <DashboardPage eyebrow="Catalog" title="Collections">
+    <DashboardPage eyebrow="Inventory" title="Collections">
       <CollectionsClient collections={collections} totalItems={totalItems} />
     </DashboardPage>
   );

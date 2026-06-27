@@ -183,7 +183,7 @@ export default function AdminDisputesPage() {
   };
 
   return (
-    <DashboardPage eyebrow="Customer Care" title="Disputes & Mediation">
+    <DashboardPage eyebrow="Support" title="Customer Disputes & Complaints">
       {loading ? (
         <div className="flex items-center justify-center p-12 text-muted-foreground">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />

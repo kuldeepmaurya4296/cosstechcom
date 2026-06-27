@@ -32,7 +32,7 @@ export default async function NewCollectionPage() {
   });
 
   return (
-    <DashboardPage eyebrow="Catalog" title="New Collection">
+    <DashboardPage eyebrow="Inventory" title="New Collection">
       <div className="py-6">
         <CollectionForm productsList={productsList} />
       </div>
