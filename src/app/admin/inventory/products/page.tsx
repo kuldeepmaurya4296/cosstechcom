@@ -57,7 +57,7 @@ export default async function AdminProductsPage({
   });
 
   return (
-    <DashboardPage eyebrow="Catalog" title="Products">
+    <DashboardPage eyebrow="Inventory" title="Products">
       <ProductsClient products={products} totalItems={totalItems} />
     </DashboardPage>
   );

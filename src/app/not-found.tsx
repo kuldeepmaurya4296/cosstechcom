@@ -24,7 +24,7 @@ export default function NotFound() {
           </h1>
           <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
             The product page or destination you are seeking has wandered off the path or has been
-            retired from our catalog.
+            no longer available on our site.
           </p>
         </div>
 
@@ -34,7 +34,7 @@ export default function NotFound() {
             href="/shop"
             className="w-full sm:w-auto px-6 py-3 bg-primary text-primary-foreground text-sm font-semibold rounded-full hover:bg-primary/95 transition-all shadow-sm flex items-center justify-center gap-2 group cursor-pointer"
           >
-            Explore Catalog
+            Explore All Products
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Link>
 

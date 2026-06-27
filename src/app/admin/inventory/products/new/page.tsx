@@ -25,7 +25,7 @@ export default async function NewProductPage() {
   }));
 
   return (
-    <DashboardPage eyebrow="Catalog" title="New Product">
+    <DashboardPage eyebrow="Inventory" title="New Product">
       <div className="py-6">
         <ProductForm categories={categories} brands={brands} />
       </div>

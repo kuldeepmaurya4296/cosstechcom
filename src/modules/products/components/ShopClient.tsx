@@ -331,7 +331,7 @@ export default function ShopClient({
             The Collection
           </p>
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-charcoal">
-            Marketplace Catalog
+            Shop All Products
           </h1>
           <p className="text-muted-foreground text-sm mt-3 max-w-2xl leading-relaxed">
             Explore premium products from verified multi-vendor brands across India. Compare

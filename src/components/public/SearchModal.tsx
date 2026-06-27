@@ -166,7 +166,7 @@ export function SearchModal({ onClose, categoriesList }: SearchModalProps) {
             {searching && (
               <div className="py-10 text-center">
                 <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-primary mx-auto mb-3"></div>
-                <p className="text-sm text-muted-foreground font-medium">Searching catalog...</p>
+                <p className="text-sm text-muted-foreground font-medium">Searching products...</p>
               </div>
             )}
 

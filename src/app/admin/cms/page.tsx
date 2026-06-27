@@ -70,7 +70,7 @@ export default async function AdminCmsPage() {
   }));
 
   return (
-    <DashboardPage eyebrow="Content" title="Website CMS">
+    <DashboardPage eyebrow="Website" title="Website Content Management">
       <CmsClient
         banners={banners}
         settings={settings}

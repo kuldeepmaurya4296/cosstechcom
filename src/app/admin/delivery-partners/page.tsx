@@ -12,7 +12,7 @@ export default async function DeliveryPartnersPage() {
   }
 
   return (
-    <DashboardPage eyebrow="Logistics" title="Delivery Partners & Riders">
+    <DashboardPage eyebrow="Delivery" title="Delivery Partners & Riders">
       <DeliveryPartnersClient />
     </DashboardPage>
   );

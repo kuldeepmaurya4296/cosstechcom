@@ -104,7 +104,7 @@ export function Hero({ initialBanners }: { initialBanners?: any[] }) {
         "Elevate your look with block heels, festive ethnic flats, and daily sandals built with ergonomic arch support.",
       cta: "Shop Women Collection",
       href: "/shop?category=women",
-      tagline: "Atelier Women's Collection",
+      tagline: "Exclusive Women's Collection",
       badgeTitle: "Cognac Block Strap Heel",
       badgePrice: "From ₹1,499",
       image:

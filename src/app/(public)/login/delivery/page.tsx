@@ -136,7 +136,7 @@ function DeliveryLoginForm() {
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to Portals</span>
+          <span>Back to Login Options</span>
         </Link>
       </div>
 
@@ -147,10 +147,10 @@ function DeliveryLoginForm() {
       <div className="bg-card border border-border/80 rounded-2xl p-8 shadow-lg backdrop-blur-md bg-white/70">
         <div className="flex items-center justify-center gap-2 mb-2 text-cognac font-bold">
           <Truck className="h-5 w-5 text-cognac" />
-          <span className="text-xs uppercase tracking-widest">Logistics Portal</span>
+          <span className="text-xs uppercase tracking-widest">Delivery Partner Portal</span>
         </div>
         <h1 className="font-serif text-3xl font-bold text-center text-charcoal">Delivery Partner</h1>
-        <p className="text-sm text-muted-foreground text-center mt-1">Accept dispatches & track earnings</p>
+        <p className="text-sm text-muted-foreground text-center mt-1">Accept deliveries & track earnings</p>
 
         {/* Tab Selector */}
         <div className="grid grid-cols-2 gap-1 p-1 bg-muted/60 rounded-xl mt-6 border border-border/50">
@@ -174,7 +174,7 @@ function DeliveryLoginForm() {
                 : "text-muted-foreground hover:text-charcoal"
             }`}
           >
-            Password Sign In
+            Password Login
           </button>
         </div>
 
@@ -203,7 +203,7 @@ function DeliveryLoginForm() {
                   disabled={sendingOtp}
                   className="w-full bg-primary text-primary-foreground rounded-full py-3.5 font-bold text-sm cursor-pointer hover:bg-primary/95 active:scale-98 transition shadow-md border border-primary/20"
                 >
-                  {sendingOtp ? "Requesting OTP..." : "Get Verification Code"}
+                  {sendingOtp ? "Requesting OTP..." : "Send OTP"}
                 </button>
               </form>
             ) : (

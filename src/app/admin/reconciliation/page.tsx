@@ -119,7 +119,7 @@ export default async function AdminReconciliationPage() {
   };
 
   return (
-    <DashboardPage eyebrow="Finance" title="Financial Reconciliation">
+    <DashboardPage eyebrow="Finance" title="Financial Settlements">
       <ReconciliationClient summary={summary} ledgers={Array.from(vendorMetrics.values())} />
     </DashboardPage>
   );

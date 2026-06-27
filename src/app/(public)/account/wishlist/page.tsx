@@ -110,7 +110,7 @@ export default function AccountWishlistPage() {
         <div>
           <h2 className="font-serif text-2xl font-bold text-foreground">Wishlist</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Your curated list of style favorites
+            Your saved items list
           </p>
         </div>
         {items.length > 0 && (

@@ -87,7 +87,7 @@ export default async function AdminOrdersPage({
   }));
 
   return (
-    <DashboardPage eyebrow="Fulfilment" title="Orders">
+    <DashboardPage eyebrow="Order Processing" title="Orders">
       <OrdersClient orders={orders} totalItems={totalItems} statusCounts={statusCounts} />
     </DashboardPage>
   );
