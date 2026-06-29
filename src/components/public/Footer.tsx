@@ -6,12 +6,13 @@ import { useTheme } from "@/components/public/ThemeProvider";
 import { Sun, Moon, MapPin, Phone, Mail, Shield } from "lucide-react";
 
 const shopLinks = [
-  { label: "All Footwear", href: "/shop" },
-  { label: "Men's Collection", href: "/shop?category=mens" },
-  { label: "Women's Collection", href: "/shop?category=womens" },
-  { label: "Bridal & Wedding", href: "/shop?category=bridal" },
-  { label: "Sports & Athletic", href: "/shop?category=sports" },
-  { label: "Kids' Footwear", href: "/shop?category=kids" },
+  { label: "All Products", href: "/shop" },
+  { label: "Electronics", href: "/shop?category=electronics" },
+  { label: "Fashion & Apparel", href: "/shop?category=fashion" },
+  { label: "Grocery & Essentials", href: "/shop?category=grocery" },
+  { label: "Home & Living", href: "/shop?category=home" },
+  { label: "Sports & Outdoors", href: "/shop?category=sports" },
+  { label: "Beauty & Personal Care", href: "/shop?category=beauty" },
 ];
 
 const customerLinks = [

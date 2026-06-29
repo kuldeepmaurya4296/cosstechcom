@@ -52,7 +52,7 @@ export async function verifyOtp(phone: string, inputOtp: string): Promise<boolea
     const storedOtp = await redisClient.get(key);
     if (!storedOtp) return false;
 
-    const matches = storedOtp.trim() === inputOtp.trim();
+    const matches = (storedOtp as string).trim() === inputOtp.trim();
     if (matches) {
       // Delete OTP on success to prevent reuse
       await redisClient.del(key);

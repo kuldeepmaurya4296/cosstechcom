@@ -13,18 +13,21 @@ export interface CartLine {
   color: string;
   quantity: number;
   slug: string;
+  vendorId?: string;
+  vendorName?: string;
 }
 
 interface CartCtx {
   lines: CartLine[];
   wishlist: string[];
-  add: (p: Product, opts: { size: string | number; color: string; quantity?: number }) => void;
+  add: (p: any, opts: { size: string | number; color: string; quantity?: number }) => void;
   remove: (key: string) => void;
   setQty: (key: string, q: number) => void;
   clear: () => void;
   toggleWish: (id: string) => void;
   count: number;
   subtotal: number;
+  groupByVendor: () => Record<string, { vendorName: string; items: CartLine[] }>;
 }
 
 const Ctx = createContext<CartCtx | null>(null);
@@ -153,6 +156,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           color,
           quantity,
           slug: p.slug,
+          vendorId: p.vendorId,
+          vendorName: p.vendorStoreName || p.vendorName || "CosstechCom",
         },
       ];
     });
@@ -189,9 +194,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = lines.reduce((s, l) => s + l.quantity, 0);
   const subtotal = lines.reduce((s, l) => s + l.price * l.quantity, 0);
 
+  const groupByVendor = () => {
+    const groups: Record<string, { vendorName: string; items: CartLine[] }> = {};
+    lines.forEach((line) => {
+      const vId = line.vendorId || "admin";
+      const vName = line.vendorName || "CosstechCom";
+      if (!groups[vId]) {
+        groups[vId] = { vendorName: vName, items: [] };
+      }
+      groups[vId].items.push(line);
+    });
+    return groups;
+  };
+
   return (
     <Ctx.Provider
-      value={{ lines, wishlist, add, remove, setQty, clear, toggleWish, count, subtotal }}
+      value={{
+        lines,
+        wishlist,
+        add,
+        remove,
+        setQty,
+        clear,
+        toggleWish,
+        count,
+        subtotal,
+        groupByVendor,
+      }}
     >
       {children}
     </Ctx.Provider>

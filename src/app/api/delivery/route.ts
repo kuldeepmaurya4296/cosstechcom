@@ -134,7 +134,7 @@ export async function PUT(request: Request) {
         const otpKey = `delivery_otp:${subOrder._id.toString()}`;
         const storedOtp = await redisClient.get(otpKey);
 
-        if (!storedOtp || storedOtp.trim() !== deliveryOtp.trim()) {
+        if (!storedOtp || (storedOtp as string).trim() !== deliveryOtp.trim()) {
           return NextResponse.json({ error: "Invalid or expired delivery verification OTP. Please try again." }, { status: 400 });
         }
 

@@ -61,6 +61,7 @@ export function normalizeProduct(p: any) {
     vendorId: p.vendorId && typeof p.vendorId === "object" && p.vendorId._id ? p.vendorId._id.toString() : toStr(p.vendorId),
     vendorName: p.vendorId && typeof p.vendorId === "object" ? p.vendorId.name : undefined,
     vendorStoreName: p.vendorId && typeof p.vendorId === "object" ? p.vendorId.storeName : undefined,
+    vendorStoreSlug: p.vendorId && typeof p.vendorId === "object" ? p.vendorId.storeSlug : undefined,
     specifications: p.specifications
       ? p.specifications.map((spec: any) => ({
           key: String(spec.key || ""),

@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Inter, Poppins } from "next/font/google";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import { Watermark } from "@/components/shared/Watermark";
 import "./globals.css";
 
-const inter = { variable: "font-sans" };
-const poppins = { variable: "font-serif" };
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cosstechcom.com"),
@@ -34,7 +45,7 @@ export const metadata: Metadata = {
     siteName: "CosstechCom",
     images: [
       {
-        url: "/assets/hero-boots.jpg",
+        url: "/cosstechcom-logo.png",
         width: 1200,
         height: 630,
         alt: "CosstechCom Multi-Vendor Marketplace",
@@ -45,7 +56,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "CosstechCom",
     description: "India's Online Multi-Vendor Marketplace.",
-    images: ["/assets/hero-boots.jpg"],
+    images: ["/cosstechcom-logo.png"],
   },
 };
 

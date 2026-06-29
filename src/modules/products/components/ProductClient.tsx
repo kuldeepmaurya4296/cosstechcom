@@ -379,6 +379,12 @@ export default function ProductClient({
               </div>
             )}
 
+            {/* EMI & Pay Later details */}
+            <div className="mt-2.5 flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+              <span className="text-brass">💳</span>
+              <span>EMI starting from {formatINR(149)}/month. No-cost EMI &amp; Pay Later options available.</span>
+            </div>
+
             {/* Description */}
             <div
               className="mt-4 text-sm text-muted-foreground leading-relaxed prose prose-stone max-w-none"
@@ -519,7 +525,7 @@ export default function ProductClient({
               </div>
               {product.vendorId && (
                 <Link
-                  href={`/shop?vendor=${product.vendorId}`}
+                  href={product.vendorStoreSlug ? `/store/${product.vendorStoreSlug}` : `/shop?vendor=${product.vendorId}`}
                   className="bg-charcoal hover:bg-cognac text-cream text-[10px] font-bold px-3 py-1.5 rounded-xl transition cursor-pointer"
                 >
                   Visit Store
@@ -529,6 +535,27 @@ export default function ProductClient({
             <div className="flex gap-3 text-[10px] text-muted-foreground font-semibold">
               <span className="flex items-center gap-1 bg-cream px-2 py-1 rounded-md border border-border/40">⭐ 4.8 Seller Rating</span>
               <span className="flex items-center gap-1 bg-cream px-2 py-1 rounded-md border border-border/40">🚚 99% Fast Dispatch</span>
+            </div>
+          </div>
+
+          {/* Legal Compliance & Origin Info */}
+          <div className="border-t border-border/60 pt-5 space-y-2.5">
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-muted-foreground">
+              Regulatory Compliance &amp; Info
+            </h3>
+            <div className="bg-muted/10 border border-border/40 rounded-xl p-3.5 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-medium">Country of Origin:</span>
+                <span className="text-charcoal font-semibold">India</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-medium">Manufacturer:</span>
+                <span className="text-charcoal font-semibold text-right">CosstechCom Certified Partner</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-medium">Customer Care:</span>
+                <span className="text-charcoal font-semibold text-right">care@cosstechcom.com</span>
+              </div>
             </div>
           </div>
 
