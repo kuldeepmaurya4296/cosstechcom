@@ -33,6 +33,23 @@ export default function ShopClient({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Desktop horizontal wheel scrolling support
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollTo({
+        left: el.scrollLeft + e.deltaY * 1.5,
+        behavior: "auto"
+      });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   // Filter Drawer State
   const [filterOpen, setFilterOpen] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -380,7 +397,7 @@ export default function ShopClient({
       {/* Main Filter & Sort Controls Grid */}
       <div className="sticky top-16 md:top-20 z-20 -mx-4 md:mx-0 px-4 md:px-3 py-3.5 bg-cream/80 backdrop-blur-md border-y border-border/80 md:border md:rounded-2xl md:bg-card/90 md:p-5 md:shadow-lg mb-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 transition-all duration-300">
         {/* Categories scrollable container */}
-        <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 px-1 sm:px-0">
+        <div ref={scrollRef} className="flex items-center gap-2.5 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 px-1 sm:px-0 w-full min-w-0 lg:flex-1">
           <button
             onClick={() => updateFilters({ category: "all" })}
             className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
