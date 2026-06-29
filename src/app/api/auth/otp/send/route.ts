@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/lib/models/User';
 import { generateAndSendOtp } from '@/lib/otp';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import redisClient from '@/lib/redis';
 
 export async function POST(request: Request) {
   try {
@@ -33,9 +34,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: result.error || 'Failed to send OTP' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: 'OTP sent successfully' });
+    // In non-production, return the OTP so the UI can show it for testing
+    const response: any = { success: true, message: 'OTP sent successfully' };
+    if (process.env.NODE_ENV !== 'production') {
+      const storedOtp = await redisClient.get(`otp:${phone.trim()}`);
+      if (storedOtp) {
+        response.devOtp = storedOtp;
+      }
+    }
+
+    return NextResponse.json(response);
   } catch (err: any) {
     console.error('OTP Send route error:', err);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
+

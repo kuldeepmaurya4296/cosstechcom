@@ -181,7 +181,7 @@ export default function AdminPage() {
 
           {lowStockAlerts.length > 0 && (
             <div className="mt-6 pt-4 border-t border-border">
-              <div className="flex items-center gap-2 text-red-600 mb-3">
+              <div className="flex items-center gap-2 text-destructive mb-3">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <h4 className="text-xs font-bold uppercase tracking-wider">Low Stock Registry</h4>
               </div>
@@ -189,13 +189,13 @@ export default function AdminPage() {
                 {lowStockAlerts.map((item: any) => (
                   <div
                     key={item.id}
-                    className="flex justify-between items-center text-xs bg-red-50/50 hover:bg-red-50 p-2.5 rounded-lg border border-red-100/50 transition-colors"
+                    className="flex justify-between items-center text-xs bg-destructive/5 hover:bg-destructive/10 p-2.5 rounded-lg border border-destructive/15 transition-colors"
                   >
                     <span className="font-semibold text-foreground/80 truncate max-w-[180px]">
                       {item.name}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-red-600">{item.stock} left</span>
+                      <span className="font-bold text-destructive">{item.stock} left</span>
                       <a
                         href={`/admin/inventory/products/${item.id}/edit`}
                         className="text-[10px] font-bold text-primary hover:text-cognac underline shrink-0 cursor-pointer"

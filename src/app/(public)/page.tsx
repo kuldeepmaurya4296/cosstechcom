@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CosstechCom — Multi-Vendor Online Marketplace",
     description: "Explore quality multi-category products from verified sellers.",
-    images: [{ url: "/assets/hero-boots.jpg" }],
+    images: [{ url: "/cosstechcom-logo.png" }],
   },
 };
 
@@ -236,7 +236,7 @@ export default async function Home() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-[11px] uppercase tracking-[0.3em] text-cognac font-semibold mb-2">
-              Designer Studio
+              Top Picks
             </p>
             <h2 className="font-serif text-3xl md:text-5xl font-bold text-charcoal">Bestsellers</h2>
           </div>

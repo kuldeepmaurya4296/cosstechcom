@@ -27,12 +27,12 @@ async function getProductData(productId: string) {
   let productDoc = await Product.findOne({ slug: productId, isActive: true })
     .populate({ path: "category", model: Category })
     .populate({ path: "brand", model: Brand })
-    .populate({ path: "vendorId", model: User, select: "name storeName email" });
+    .populate({ path: "vendorId", model: User, select: "name storeName email storeSlug" });
   if (!productDoc && productId.match(/^[0-9a-fA-F]{24}$/)) {
     productDoc = await Product.findOne({ _id: productId, isActive: true })
       .populate({ path: "category", model: Category })
       .populate({ path: "brand", model: Brand })
-      .populate({ path: "vendorId", model: User, select: "name storeName email" });
+      .populate({ path: "vendorId", model: User, select: "name storeName email storeSlug" });
   }
 
   if (!productDoc) return null;

@@ -147,7 +147,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const otpKey = `otp:${phone}`;
         const storedOtp = await redisClient.get(otpKey);
         
-        if (!storedOtp || storedOtp.trim() !== otpInput) {
+        if (!storedOtp || (storedOtp as string).trim() !== otpInput) {
           await recordFailedAttempt(phone);
           throw new Error("Invalid or expired OTP");
         }
