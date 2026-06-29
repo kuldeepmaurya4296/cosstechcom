@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { SlidersHorizontal, ChevronDown, RotateCcw } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { RecentlyViewed } from "@/components/public/RecentlyViewed";
 import { FilterSidebar } from "./FilterSidebar";
@@ -33,22 +33,45 @@ export default function ShopClient({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Desktop horizontal wheel scrolling support
+  // Scroll handler and arrow visibility states for categories row
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 5);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+  };
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      if (e.deltaY === 0) return;
-      e.preventDefault();
-      el.scrollTo({
-        left: el.scrollLeft + e.deltaY * 1.5,
-        behavior: "auto"
-      });
+
+    checkScroll();
+    el.addEventListener("scroll", checkScroll);
+    window.addEventListener("resize", checkScroll);
+
+    // Initial check after render to ensure correct state when products/categories load
+    const timer = setTimeout(checkScroll, 300);
+
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+      clearTimeout(timer);
     };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+  }, [categories]);
+
+  const handleScroll = (direction: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollAmount = 250;
+    el.scrollTo({
+      left: el.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
+      behavior: "smooth",
+    });
+  };
 
   // Filter Drawer State
   const [filterOpen, setFilterOpen] = useState(false);
@@ -396,34 +419,60 @@ export default function ShopClient({
 
       {/* Main Filter & Sort Controls Grid */}
       <div className="sticky top-16 md:top-20 z-20 -mx-4 md:mx-0 px-4 md:px-3 py-3.5 bg-cream/80 backdrop-blur-md border-y border-border/80 md:border md:rounded-2xl md:bg-card/90 md:p-5 md:shadow-lg mb-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 transition-all duration-300">
-        {/* Categories scrollable container */}
-        <div ref={scrollRef} className="flex items-center gap-2.5 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 px-1 sm:px-0 w-full min-w-0 lg:flex-1">
-          <button
-            onClick={() => updateFilters({ category: "all" })}
-            className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
-              activeCategory === "all"
-                ? "bg-charcoal text-cream shadow-md scale-102"
-                : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
-            }`}
+        {/* Categories scrollable wrapper with relative navigation arrows */}
+        <div className="relative flex-1 min-w-0 w-full flex items-center group">
+          {canScrollLeft && (
+            <button
+              onClick={() => handleScroll("left")}
+              className="absolute left-0 z-10 bg-card/90 hover:bg-card border border-border/80 rounded-full h-8 w-8 flex items-center justify-center shadow-md hover:shadow-lg text-charcoal hover:text-cognac transition cursor-pointer"
+              aria-label="Scroll categories left"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          )}
+
+          {/* Categories scrollable container */}
+          <div
+            ref={scrollRef}
+            className="flex items-center gap-2.5 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 px-1 sm:px-0 w-full min-w-0"
           >
-            All Styles
-          </button>
-          {level1Categories.map((c) => {
-            const isSelected = isCategorySelected(c.slug);
-            return (
-              <button
-                key={c.id || c._id}
-                onClick={() => updateFilters({ category: c.slug })}
-                className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
-                  isSelected
-                    ? "bg-charcoal text-cream shadow-md scale-102"
-                    : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
-                }`}
-              >
-                {c.name}
-              </button>
-            );
-          })}
+            <button
+              onClick={() => updateFilters({ category: "all" })}
+              className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
+                activeCategory === "all"
+                  ? "bg-charcoal text-cream shadow-md scale-102"
+                  : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
+              }`}
+            >
+              All Styles
+            </button>
+            {level1Categories.map((c) => {
+              const isSelected = isCategorySelected(c.slug);
+              return (
+                <button
+                  key={c.id || c._id}
+                  onClick={() => updateFilters({ category: c.slug })}
+                  className={`px-4.5 py-2 rounded-full text-xs font-bold whitespace-nowrap cursor-pointer transition-all duration-300 shadow-xs ${
+                    isSelected
+                      ? "bg-charcoal text-cream shadow-md scale-102"
+                      : "bg-cream/60 text-muted-foreground hover:bg-cream hover:text-charcoal border border-border/50"
+                  }`}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+
+          {canScrollRight && (
+            <button
+              onClick={() => handleScroll("right")}
+              className="absolute right-0 z-10 bg-card/90 hover:bg-card border border-border/80 rounded-full h-8 w-8 flex items-center justify-center shadow-md hover:shadow-lg text-charcoal hover:text-cognac transition cursor-pointer"
+              aria-label="Scroll categories right"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
         {/* Sort & Filter Drawer toggle */}
