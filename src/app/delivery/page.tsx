@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { DashboardPage } from "@/modules/admin/dashboard/components/DashboardLayout";
 import { StatCard } from "@/modules/admin/dashboard/components/StatCard";
-import { Truck, CheckCircle2, ClipboardList, ScanLine, Phone, MapPin, IndianRupee, Eye, AlertCircle } from "lucide-react";
+import { Truck, CheckCircle2, ClipboardList, ScanLine, Phone, MapPin, IndianRupee, Eye, AlertCircle, RefreshCw } from "lucide-react";
 import { formatINR, formatDate } from "@/lib/format";
 import { toast } from "sonner";
 
@@ -56,20 +56,24 @@ export default function DeliveryPartnerPage() {
   const [assignedOrders, setAssignedOrders] = useState<SubOrder[]>([]);
   const [unclaimedOrders, setUnclaimedOrders] = useState<SubOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "unclaimed" | "completed">("active");
   const [barcodeInput, setBarcodeInput] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [noteInput, setNoteInput] = useState<Record<string, string>>({});
 
   const fetchDeliveries = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/delivery");
-      if (!res.ok) throw new Error("Failed to load");
+      if (!res.ok) throw new Error("Failed to load delivery records from server.");
       const data = await res.json();
       setAssignedOrders(data.assigned || []);
       setUnclaimedOrders(data.unclaimed || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || "Failed to load delivery records.");
       toast.error("Failed to load delivery records.");
     } finally {
       setLoading(false);
@@ -194,6 +198,24 @@ export default function DeliveryPartnerPage() {
       <DashboardPage eyebrow="Logistics" title="Delivery Operations">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </DashboardPage>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardPage eyebrow="Logistics" title="Delivery Operations">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6 text-center max-w-lg mx-auto mt-12">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-3" />
+          <h3 className="font-serif font-bold text-lg text-foreground mb-1">Failed to Load Shipments</h3>
+          <p className="text-sm text-muted-foreground mb-4">{error}</p>
+          <button
+            onClick={fetchDeliveries}
+            className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/95 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer transition shadow"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Retry
+          </button>
         </div>
       </DashboardPage>
     );

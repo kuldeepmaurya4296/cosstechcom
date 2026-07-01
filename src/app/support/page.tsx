@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DashboardPage } from "@/modules/admin/dashboard/components/DashboardLayout";
 import { StatCard } from "@/modules/admin/dashboard/components/StatCard";
-import { MessageSquare, AlertTriangle, ShieldCheck, User, Store, Send, CheckCircle, RefreshCcw } from "lucide-react";
+import { MessageSquare, AlertTriangle, ShieldCheck, User, Store, Send, CheckCircle, RefreshCcw, AlertCircle } from "lucide-react";
 import { formatINR, formatDate } from "@/lib/format";
 import { toast } from "sonner";
 
@@ -54,8 +54,14 @@ export default function SupportMediationPage() {
   const [assignedCases, setAssignedCases] = useState<Dispute[]>([]);
   const [unclaimedCases, setUnclaimedCases] = useState<Dispute[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "unclaimed" | "resolved">("active");
   const [selectedCase, setSelectedCase] = useState<Dispute | null>(null);
+  
+  const selectedCaseIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    selectedCaseIdRef.current = selectedCase?._id || null;
+  }, [selectedCase]);
 
   // Form states for chat & resolution
   const [chatMessage, setChatMessage] = useState("");
@@ -66,21 +72,25 @@ export default function SupportMediationPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchCases = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/support");
-      if (!res.ok) throw new Error("Failed to fetch");
+      if (!res.ok) throw new Error("Failed to fetch dispute cases from server.");
       const data = await res.json();
       setAssignedCases(data.assigned || []);
       setUnclaimedCases(data.unclaimed || []);
 
-      // Refresh currently selected case data if open
-      if (selectedCase) {
+      // Refresh currently selected case data if open (using Ref to prevent stale closure)
+      const currentSelectedId = selectedCaseIdRef.current;
+      if (currentSelectedId) {
         const all = [...(data.assigned || []), ...(data.unclaimed || [])];
-        const updated = all.find((c) => c._id === selectedCase._id);
+        const updated = all.find((c) => c._id === currentSelectedId);
         if (updated) setSelectedCase(updated);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || "Failed to load dispute cases.");
       toast.error("Failed to load dispute cases.");
     } finally {
       setLoading(false);
@@ -178,6 +188,24 @@ export default function SupportMediationPage() {
       <DashboardPage eyebrow="Customer Care" title="Mediation Center">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </DashboardPage>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardPage eyebrow="Customer Care" title="Mediation Center">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6 text-center max-w-lg mx-auto mt-12">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-3" />
+          <h3 className="font-serif font-bold text-lg text-foreground mb-1">Failed to Load Disputes</h3>
+          <p className="text-sm text-muted-foreground mb-4">{error}</p>
+          <button
+            onClick={fetchCases}
+            className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/95 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer transition shadow"
+          >
+            <RefreshCcw className="h-3.5 w-3.5" /> Retry
+          </button>
         </div>
       </DashboardPage>
     );
@@ -306,7 +334,7 @@ export default function SupportMediationPage() {
                       {selectedCase.disputeId}
                     </span>
                     <span className="text-[10px] text-red-600 bg-red-50 border border-red-100 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                      {selectedCase.type.replace("_", " ")}
+                      {selectedCase.type.replace(/_/g, " ")}
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-1">
@@ -589,7 +617,7 @@ function DisputeRow({
         </span>
       </div>
       <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-2">
-        Type: {dispute.type.replace("_", " ")}
+        Type: {dispute.type.replace(/_/g, " ")}
       </p>
       <p className="text-muted-foreground line-clamp-2 italic mb-2">"{dispute.description}"</p>
       <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t border-border/40 pt-2 mt-2">

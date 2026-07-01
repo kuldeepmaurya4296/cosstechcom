@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { DashboardPage } from "@/modules/admin/dashboard/components/DashboardLayout";
 import { StatCard } from "@/modules/admin/dashboard/components/StatCard";
-import { Package, IndianRupee, ShoppingCart, Star } from "lucide-react";
+import { Package, IndianRupee, ShoppingCart, Star, AlertCircle, RefreshCw } from "lucide-react";
 import { DataTable, StatusBadge, type Column } from "@/modules/admin/shared/components/DataTable";
 import { formatINR, formatDate, formatNumber } from "@/lib/format";
 import { toast } from "sonner";
@@ -37,29 +37,54 @@ const cols: Column<any>[] = [
 export default function VendorPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchStats = () => {
+    setLoading(true);
+    setError(null);
     fetch("/api/vendor/dashboard")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load vendor dashboard metrics.");
+        return res.json();
+      })
       .then((data) => {
         setStats(data);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Failed to load vendor dashboard", err);
+        setError(err.message || "Failed to load vendor dashboard.");
         setLoading(false);
       });
-  }, []);
-
-  const handleRequestPayout = () => {
-    toast.success("Redirecting to withdrawals portal...");
   };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   if (loading) {
     return (
       <DashboardPage eyebrow="Seller Portal" title="Overview">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </DashboardPage>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardPage eyebrow="Seller Portal" title="Overview">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6 text-center max-w-lg mx-auto mt-12">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-3" />
+          <h3 className="font-serif font-bold text-lg text-foreground mb-1">Failed to Load Dashboard</h3>
+          <p className="text-sm text-muted-foreground mb-4">{error}</p>
+          <button
+            onClick={fetchStats}
+            className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/95 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer transition shadow"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Retry
+          </button>
         </div>
       </DashboardPage>
     );
@@ -138,7 +163,6 @@ export default function VendorPage() {
         </div>
         <Link
           href="/vendor/payouts"
-          onClick={handleRequestPayout}
           className="bg-brass text-charcoal hover:bg-brass/90 px-6 py-3 rounded-full text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-md inline-block"
         >
           Withdraw Funds

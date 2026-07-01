@@ -47,6 +47,9 @@ if (isRedisConfigured && (redisClient as any).url) {
   });
 }
 
+const ratelimitInstances = new Map<string, Ratelimit>();
+const ephemeralCaches = new Map<string, Map<any, any>>();
+
 /**
  * Universal rate limit function. Uses Upstash Redis rate limiting if configured,
  * otherwise falls back to local in-memory sliding window rate limiting.
@@ -59,12 +62,21 @@ export async function rateLimit(
 
   if (isRedisConfigured && ratelimitInstance) {
     try {
-      // Create a dynamic ratelimit instance tailored to these specific options if they differ from default
-      const customRatelimit = new Ratelimit({
-        redis: redisClient as any,
-        limiter: Ratelimit.slidingWindow(options.limit, `${options.windowSeconds} s`),
-        ephemeralCache: new Map(), // optimize performance by caching results in memory for a short time
-      });
+      const configKey = `${options.limit}:${options.windowSeconds}`;
+      let customRatelimit = ratelimitInstances.get(configKey);
+      if (!customRatelimit) {
+        let cache = ephemeralCaches.get(configKey);
+        if (!cache) {
+          cache = new Map();
+          ephemeralCaches.set(configKey, cache);
+        }
+        customRatelimit = new Ratelimit({
+          redis: redisClient as any,
+          limiter: Ratelimit.slidingWindow(options.limit, `${options.windowSeconds} s`),
+          ephemeralCache: cache,
+        });
+        ratelimitInstances.set(configKey, customRatelimit);
+      }
       
       const result = await customRatelimit.limit(cacheKey);
       return {

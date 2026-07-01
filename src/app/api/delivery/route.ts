@@ -83,7 +83,7 @@ export async function PUT(request: Request) {
       // Generate a 6-digit random code
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const otpKey = `delivery_otp:${subOrder._id.toString()}`;
-      await redisClient.set(otpKey, otp, { ex: 3600 }); // Expires in 1 hour
+      await redisClient.set(otpKey, otp, { ex: 600 }); // Expires in 10 minutes
       
       console.log(`[SMS / WHATSAPP DELIVERY OTP SIMULATION]`);
       console.log(`OTP for delivery of sub-order ${subOrder.subOrderId} is: ${otp}`);
@@ -159,3 +159,5 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: error.message || "Operation failed" }, { status: 500 });
   }
 }
+
+export const dynamic = "force-dynamic";
