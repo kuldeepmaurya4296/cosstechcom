@@ -40,6 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { status } = useSession();
   const [lines, setLines] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [dbFetched, setDbFetched] = useState(false);
 
   useEffect(() => {
     try {
@@ -47,30 +48,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (c) setLines(JSON.parse(c));
       const w = localStorage.getItem(WKEY);
       if (w) setWishlist(JSON.parse(w));
-    } catch {}
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to load cart/wishlist from localStorage:", err);
+      }
+    }
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem(KEY, JSON.stringify(lines));
-    } catch {}
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to save cart to localStorage:", err);
+      }
+    }
   }, [lines]);
+  
   useEffect(() => {
     try {
       localStorage.setItem(WKEY, JSON.stringify(wishlist));
-    } catch {}
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Failed to save wishlist to localStorage:", err);
+      }
+    }
   }, [wishlist]);
 
-  // Fetch cart from database on login if local cart is empty
+  // Fetch and merge cart from database on login
   useEffect(() => {
-    if (status === "authenticated" && lines.length === 0) {
+    if (status === "authenticated" && !dbFetched) {
       const fetchCart = async () => {
         try {
           const res = await fetch("/api/user/cart");
           if (res.ok) {
             const data = await res.json();
             if (data && data.items && data.items.length > 0) {
-              const formattedLines = data.items.map((item: any) => ({
+              const dbLines = data.items.map((item: any) => ({
                 productId: item.productId,
                 name: item.name,
                 price: item.price,
@@ -82,20 +96,40 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 vendorId: item.vendorId,
                 vendorName: item.vendorName,
               }));
-              setLines(formattedLines);
+              
+              setLines((prevLocal) => {
+                const merged = [...prevLocal];
+                for (const dbLine of dbLines) {
+                  const idx = merged.findIndex(
+                    (l) => l.productId === dbLine.productId && l.size === dbLine.size && l.color === dbLine.color
+                  );
+                  if (idx >= 0) {
+                    merged[idx] = {
+                      ...merged[idx],
+                      quantity: Math.max(merged[idx].quantity, dbLine.quantity),
+                    };
+                  } else {
+                    merged.push(dbLine);
+                  }
+                }
+                return merged;
+              });
             }
+            setDbFetched(true);
           }
         } catch (err) {
           console.error("Failed to fetch cart on auth:", err);
         }
       };
       fetchCart();
+    } else if (status === "unauthenticated") {
+      setDbFetched(false);
     }
-  }, [status, lines.length]);
+  }, [status, dbFetched]);
 
-  // Debounced cart sync to database
+  // Debounced cart sync to database (only after initial DB fetch is completed)
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && dbFetched) {
       const syncCart = async () => {
         try {
           await fetch("/api/user/cart", {
@@ -111,8 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const timer = setTimeout(syncCart, 1500); // Debounce 1.5s
       return () => clearTimeout(timer);
     }
-  }, [lines, status]);
-
+  }, [lines, status, dbFetched]);
   // Sync wishlist on login
   useEffect(() => {
     if (status === "authenticated") {

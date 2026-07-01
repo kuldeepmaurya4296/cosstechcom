@@ -13,7 +13,7 @@ import { ImageUploader } from "@/modules/admin/shared/components/ImageUploader";
 import { RichTextEditor } from "@/modules/admin/shared/components/RichTextEditor";
 
 const variantSchema = z.object({
-  size: z.coerce.number().min(1, "Size is required"),
+  size: z.coerce.string().min(1, "Size is required"),
   color: z.string().min(1, "Color is required"),
   colorHex: z.string().min(1, "Color hex is required"),
   stock: z.coerce.number().min(0, "Stock cannot be negative"),
@@ -89,7 +89,7 @@ export function ProductForm({
         initialData?.occasion && initialData.occasion.length > 0 ? initialData.occasion : ["Daily"],
       images: initialData?.images || [{ url: "", public_id: "placeholder" }],
       variants: initialData?.variants || [
-        { size: 7, color: "Black", colorHex: "#000000", stock: 10, sku: "", images: [] },
+        { size: "7", color: "Black", colorHex: "#000000", stock: 10, sku: "", images: [] },
       ],
       price: initialData?.price || 0,
       salePrice: initialData?.salePrice || 0,
@@ -375,7 +375,7 @@ export function ProductForm({
               type="button"
               onClick={() =>
                 appendVariant({
-                  size: 8,
+                  size: "8",
                   color: "Black",
                   colorHex: "#000000",
                   stock: 10,
@@ -400,7 +400,7 @@ export function ProductForm({
                 <div>
                   <label className="block text-xs font-medium mb-1">Size</label>
                   <input
-                    type="number"
+                    type="text"
                     {...register(`variants.${index}.size` as const)}
                     className="w-full px-2 py-1.5 border border-border rounded text-sm bg-background"
                   />

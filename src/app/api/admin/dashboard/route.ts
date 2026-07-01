@@ -8,8 +8,15 @@ import { customers as fallbackCustomers } from "@/data/users";
 import { products as fallbackProducts } from "@/data/products";
 import { cleanupExpiredPendingOrders } from "@/lib/db-utils";
 
+import { auth } from "@/lib/auth";
+
 export async function GET() {
   try {
+    const session = await auth();
+    if (!session?.user?.id || (session.user as any).role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized. Administrative privileges required." }, { status: 401 });
+    }
+
     const db = await connectToDatabase();
     if (db) {
       await cleanupExpiredPendingOrders();
@@ -193,12 +200,12 @@ export async function GET() {
     const thisWeekOrders = await Order.find({
       createdAt: { $gte: sevenDaysAgo },
       $or: [{ "payment.method": "COD" }, { "payment.status": { $ne: "PENDING" } }],
-    }).lean();
+    }).select("pricing.total payment.status").lean();
 
     const lastWeekOrders = await Order.find({
       createdAt: { $gte: fourteenDaysAgo, $lt: sevenDaysAgo },
       $or: [{ "payment.method": "COD" }, { "payment.status": { $ne: "PENDING" } }],
-    }).lean();
+    }).select("pricing.total payment.status").lean();
 
     const thisWeekRevenue = thisWeekOrders
       .filter((o: any) => o.payment?.status === "PAID")

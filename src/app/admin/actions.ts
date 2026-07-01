@@ -224,11 +224,10 @@ export async function deleteCollection(id: string) {
     return { success: false, error: error.message };
   }
 }
-
 // --- PRODUCT ACTIONS ---
 
 const variantSchema = z.object({
-  size: z.coerce.number().min(1, "Size is required"),
+  size: z.coerce.string().min(1, "Size is required"),
   color: z.string().min(1, "Color is required"),
   colorHex: z.string().min(1, "Color hex is required"),
   stock: z.coerce.number().min(0, "Stock cannot be negative"),

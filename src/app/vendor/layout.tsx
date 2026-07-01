@@ -7,6 +7,7 @@ const items = [
   { to: "/vendor/orders", label: "Orders", icon: "ShoppingCart" },
   { to: "/vendor/payouts", label: "Payouts", icon: "Wallet" },
   { to: "/vendor/reviews", label: "Customer Reviews", icon: "MessageSquare" },
+  { to: "/vendor/kyc", label: "KYC Verification", icon: "ShieldCheck" },
   { to: "/vendor/settings", label: "Settings", icon: "Settings" },
 ];
 

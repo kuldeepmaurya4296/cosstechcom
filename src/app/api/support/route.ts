@@ -4,6 +4,7 @@ import Dispute from "@/lib/models/Dispute";
 import User from "@/lib/models/User";
 import { auth } from "@/lib/auth";
 import mongoose from "mongoose";
+import { creditUserWallet, debitUserWallet } from "@/lib/wallet";
 
 export async function GET() {
   try {
@@ -132,19 +133,26 @@ export async function PUT(request: Request) {
         message: `Dispute resolved. Action: ${resolutionAction}. Refund: INR ${numRefund}. Penalty: INR ${numPenalty}. ${note || ""}`,
         timestamp: new Date(),
       });
-
       // Side Effect: Wallet Credit to Customer
       if (resolutionAction === "REFUND_WALLET" && numRefund > 0) {
-        await User.findByIdAndUpdate(dispute.customerId, {
-          $inc: { walletBalance: numRefund },
-        });
+        await creditUserWallet(
+          dispute.customerId,
+          numRefund,
+          `Wallet refund for dispute ${dispute.disputeId}`,
+          "refund",
+          dispute._id.toString()
+        );
       }
 
       // Side Effect: Penalty deduction from Vendor Wallet
       if (numPenalty > 0 && dispute.vendorId) {
-        await User.findByIdAndUpdate(dispute.vendorId, {
-          $inc: { walletBalance: -numPenalty },
-        });
+        await debitUserWallet(
+          dispute.vendorId,
+          numPenalty,
+          `Penalty deduction for dispute ${dispute.disputeId}`,
+          "refund",
+          dispute._id.toString()
+        );
       }
 
       await dispute.save();
@@ -157,3 +165,5 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: error.message || "Mediation operation failed" }, { status: 500 });
   }
 }
+
+export const dynamic = "force-dynamic";

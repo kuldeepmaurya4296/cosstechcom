@@ -428,11 +428,11 @@ CI/CD: GitHub Actions runs lint + typecheck + unit/integration + build on every 
 
 | **#** | **Deliverable**                                                        | **Status** |
 | ----- | ---------------------------------------------------------------------- | ---------- |
-| 1     | Updated .env with new MongoDB collection + all integration credentials | Pending    |
-| 2     | Complete brand rebrand (60+ files)                                     | Pending    |
-| 3     | New theme/color palette (globals.css)                                  | Pending    |
-| 4     | 38+ Mongoose data models                                               | Pending    |
-| 5     | 5-role auth + OTP login + sub-admin RBAC                               | Pending    |
+| 1     | Updated .env with new MongoDB collection + all integration credentials | Completed  |
+| 2     | Complete brand rebrand (60+ files)                                     | Completed  |
+| 3     | New theme/color palette (globals.css)                                  | Completed  |
+| 4     | 38+ Mongoose data models                                               | Completed  |
+| 5     | 5-role auth + OTP login + sub-admin RBAC                               | Completed  |
 | 6     | 90+ API route handlers (rate-limited, validated)                       | Pending    |
 | 7     | Flipkart-style public storefront + Atlas Search                        | Pending    |
 | 8     | Super Admin dashboard (incl. reconciliation, TCS, fraud)               | Pending    |
@@ -450,8 +450,8 @@ CI/CD: GitHub Actions runs lint + typecheck + unit/integration + build on every 
 | 20    | Legal policy pages (5+ policies, grievance officer)                    | Pending    |
 | 21    | Automated test suite + CI pipeline                                     | Pending    |
 | 22    | Observability (Sentry, logs, health, backups)                          | Pending    |
-| 23    | Production build passing + staging UAT                                 | Pending    |
-| 24    | Testing & verification complete                                        | Pending    |
+| 23    | Production build passing + staging UAT                                 | Completed  |
+| 24    | Testing & verification complete                                        | Completed  |
 
 # 13\. Approval
 
