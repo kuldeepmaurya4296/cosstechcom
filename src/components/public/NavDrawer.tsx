@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { X, User, ArrowRight } from "lucide-react";
+import { X, User, ArrowRight, ChevronRight } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import Image from "next/image";
 
@@ -16,11 +16,43 @@ interface NavDrawerProps {
 
 export function NavDrawer({ onClose, categoriesList, session, accountLink }: NavDrawerProps) {
   const [drawerAvatarError, setDrawerAvatarError] = useState(false);
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
-  const links = categoriesList.map((c) => ({
-    href: `/shop?category=${c.slug}`,
-    label: c.name.replace(" Footwear", ""),
-  }));
+  const toggleExpand = (id: string) => {
+    setExpandedCat(expandedCat === id ? null : id);
+  };
+
+  // Build category tree
+  const tree = useMemo(() => {
+    const map = new Map<string, any>();
+    categoriesList.forEach((cat) => {
+      const catId = cat.id || cat._id?.toString() || "";
+      if (catId) {
+        map.set(catId, { ...cat, id: catId, children: [] });
+      }
+    });
+
+    const rootNodes: any[] = [];
+    categoriesList.forEach((cat) => {
+      const catId = cat.id || cat._id?.toString() || "";
+      if (!catId) return;
+
+      const node = map.get(catId);
+      if (cat.parentId) {
+        const parentIdStr = cat.parentId.toString();
+        const parentNode = map.get(parentIdStr);
+        if (parentNode) {
+          parentNode.children.push(node);
+        } else {
+          rootNodes.push(node);
+        }
+      } else {
+        rootNodes.push(node);
+      }
+    });
+
+    return rootNodes.filter((node) => node.level === 1 || !node.parentId);
+  }, [categoriesList]);
 
   return (
     <>
@@ -53,27 +85,64 @@ export function NavDrawer({ onClose, categoriesList, session, accountLink }: Nav
         </div>
 
         {/* Navigation Links */}
-        <div className="flex flex-col gap-1 flex-grow p-4">
+        <div className="flex flex-col gap-1.5 flex-grow p-4">
           <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 font-bold px-3 mb-1">
             Shop by Category
           </p>
           <Link
             href="/shop"
             onClick={onClose}
-            className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all hover:bg-muted text-foreground"
+            className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all hover:bg-primary/5 hover:text-primary text-foreground"
           >
             Shop All
           </Link>
-          {links.map((l) => (
-            <Link
-              key={l.label}
-              href={l.href}
-              onClick={onClose}
-              className="px-3 py-2.5 rounded-xl text-sm font-medium hover:bg-muted text-foreground/75 hover:text-foreground uppercase tracking-wider transition-all"
-            >
-              {l.label}
-            </Link>
-          ))}
+          
+          {tree.map((cat) => {
+            const hasChildren = cat.children && cat.children.length > 0;
+            const isExpanded = expandedCat === cat.id;
+
+            return (
+              <div key={cat.id} className="border-b border-border/30 last:border-0 py-0.5">
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={`/shop?category=${cat.slug}`}
+                    onClick={onClose}
+                    className="flex-1 px-3 py-2 rounded-xl text-xs font-bold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-wider"
+                  >
+                    {cat.name}
+                  </Link>
+                  {hasChildren && (
+                    <button
+                      onClick={() => toggleExpand(cat.id)}
+                      className="p-2 hover:bg-primary/5 rounded-lg transition text-muted-foreground hover:text-primary cursor-pointer mr-1"
+                      aria-label="Toggle subcategories"
+                    >
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          isExpanded ? "rotate-90 text-primary" : ""
+                        }`}
+                      />
+                    </button>
+                  )}
+                </div>
+
+                {hasChildren && isExpanded && (
+                  <div className="pl-4 pr-2 pb-2.5 flex flex-col gap-1.5 bg-muted/20 rounded-xl mt-1.5 mx-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                    {cat.children.map((child: any) => (
+                      <Link
+                        key={child.id}
+                        href={`/shop?category=${child.slug}`}
+                        onClick={onClose}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all"
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Drawer Footer */}
